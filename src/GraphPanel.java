@@ -15,7 +15,6 @@ public class GraphPanel extends JPanel {
     private JTextField functionField;
     public JButton resetButton;
     private ParametricFunction polynomial;
-    // PolynomialFunction polynomial;
     private List<Double> zeroPoints;
     private List<Double> extremePoints;
     private class GraphMouseListener extends MouseAdapter {
@@ -47,8 +46,10 @@ public class GraphPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             String function = functionField.getText();
             polynomial = new PolynomialFunction(function);
-            zeroPoints = ((PolynomialFunction)polynomial).getZeroPoints();
-            extremePoints = ((PolynomialFunction)polynomial).getExtremePoints();
+            double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
+            double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
+            zeroPoints = ((PolynomialFunction)polynomial).getZeroPoints(minT, maxT, 0.01);
+            extremePoints = ((PolynomialFunction)polynomial).getExtremePoints(minT, maxT, 0.01);
             repaint();
         }
     }
@@ -78,8 +79,10 @@ public class GraphPanel extends JPanel {
         );
 
         if(polynomial instanceof PolynomialFunction){
-            zeroPoints = ((PolynomialFunction)polynomial).getZeroPoints();
-            extremePoints = ((PolynomialFunction)polynomial).getExtremePoints();
+            double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
+            double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
+            zeroPoints = ((PolynomialFunction)polynomial).getZeroPoints(minT, maxT, 0.01);
+            extremePoints = ((PolynomialFunction)polynomial).getExtremePoints(minT, maxT, 0.01);
         }
 
         GraphMouseListener graphMouseListener = new GraphMouseListener();

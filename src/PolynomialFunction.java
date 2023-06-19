@@ -6,9 +6,6 @@ public class PolynomialFunction implements ParametricFunction {
 
     private double[] coefficients;
     public String functionString;
-    private static final double DEFAULT_START_X = -100.0;
-    private static final double DEFAULT_END_X = 100.0;
-    private static final double DEFAULT_STEP = 0.01;
     private static final Pattern TERM_PATTERN = Pattern.compile("([-+]?\\s*\\d*\\.?\\d*(?:/\\d+)*)?x(\\^(-?\\d+))?|([-+]?\\s*\\d+(/\\d+)?)");
 
     public PolynomialFunction(String polynomialString) {
@@ -85,7 +82,6 @@ public class PolynomialFunction implements ParametricFunction {
                 return i;
             }
         }
-
         return 0;
     }
 
@@ -125,14 +121,6 @@ public class PolynomialFunction implements ParametricFunction {
             }
         }
         functionString =  sb.toString();
-    }
-
-    public List<Double> getZeroPoints() {
-        return getZeroPoints(DEFAULT_START_X, DEFAULT_END_X, DEFAULT_STEP);
-    }
-
-    public List<Double> getExtremePoints() {
-        return getExtremePoints(DEFAULT_START_X, DEFAULT_END_X, DEFAULT_STEP);
     }
 
     public List<Double> getZeroPoints(double start, double end, double step) {
