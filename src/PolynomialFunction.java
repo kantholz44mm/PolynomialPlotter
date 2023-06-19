@@ -32,15 +32,15 @@ public class PolynomialFunction implements ParametricFunction {
             double coef;
             int exp;
 
-            if (!isEmpty(constantStr)) {
+            if (!isNullOrEmpty(constantStr)) {
                 coef = parseFraction(constantStr);
                 exp = 0;
             } else {
                 coef = 1.0;
-                if (!isEmpty(coefStr)) {
+                if (!isNullOrEmpty(coefStr)) {
                     coef = parseFractionOrSign(coefStr);
                 }
-                exp = isEmpty(expStr) ? 1 : Integer.parseInt(expStr);
+                exp = isNullOrEmpty(expStr) ? 1 : Integer.parseInt(expStr);
             }
 
             extendCoefficientsArrayIfNeeded(exp);
@@ -52,7 +52,7 @@ public class PolynomialFunction implements ParametricFunction {
         return str == null ? null : str.trim();
     }
 
-    private boolean isEmpty(String str) {
+    private boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
     }
 
