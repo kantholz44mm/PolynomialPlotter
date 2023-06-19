@@ -193,9 +193,10 @@ public class GraphPanel extends JPanel {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(width, 0)).x;
 
-        int numSteps = 5000;
+        int numSteps = (int) Math.max(5000, 10000 * zoom);
 
         double tStep = (maxT - minT) / numSteps;
+
 
         for (int x = 0; x < polynomials.size(); x++) {
             path = new GeneralPath();
@@ -204,14 +205,22 @@ public class GraphPanel extends JPanel {
             Vector2D initialPosition = toScreenCoordinates(polynomials.get(x).evaluate(t));
             path.moveTo(initialPosition.x, initialPosition.y);
 
-            for (int i = 0; i < numSteps; i++) {
-                t += tStep;
-                Vector2D position = toScreenCoordinates(polynomials.get(x).evaluate(t));
-                path.lineTo(position.x, position.y);
+            for (int i = 0; i < numSteps; i += 3) {
+                double t1 = t + tStep;
+                double t2 = t1 + tStep;
+                double t3 = t2 + tStep;
+
+                Vector2D p1 = toScreenCoordinates(polynomials.get(x).evaluate(t1));
+                Vector2D p2 = toScreenCoordinates(polynomials.get(x).evaluate(t2));
+                Vector2D p3 = toScreenCoordinates(polynomials.get(x).evaluate(t3));
+
+                path.curveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+
+                t = t3;
             }
 
-            g2d.setStroke(new BasicStroke(1.5f));
-            g2d.setColor(colours.get(x % colours.size())); // Use modulo to cycle through colors if there are more polynomials than colors
+            g2d.setStroke(new BasicStroke(2.0f));
+            g2d.setColor(colours.get(x % colours.size()));
             g2d.draw(path);
         }
     }
