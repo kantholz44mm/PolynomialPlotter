@@ -47,8 +47,8 @@ public class GraphPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             String function = functionField.getText();
             polynomial = new PolynomialFunction(function);
-            zeroPoints = polynomial.getZeroPoints();
-            extremePoints = polynomial.getExtremePoints();
+            zeroPoints = ((PolynomialFunction)polynomial).getZeroPoints();
+            extremePoints = ((PolynomialFunction)polynomial).getExtremePoints();
             repaint();
         }
     }
@@ -65,44 +65,22 @@ public class GraphPanel extends JPanel {
     private class DeriveActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            polynomial.derive();
+            ((PolynomialFunction)polynomial).derive();
             repaint();
         }
     }
 
     public GraphPanel(String standardFunction) {
         // default parametric function to test functionality. Using the textfield it will become a polynomial
-        polynomial = new ParametricFunction() {
-            @Override
-            public Vector2D evaluate(double t) {
-                return new Vector2D(
-                        16.0 * Math.pow(Math.sin(t), 3.0),
-                        13.0 * Math.cos(t) - 5.0 * Math.cos(2.0 * t) - 2.0 * Math.cos(3.0 * t) - Math.cos(4.0 * t)
-                );
-            }
+        polynomial = t -> new Vector2D(
+                16.0 * Math.pow(Math.sin(t), 3.0),
+                13.0 * Math.cos(t) - 5.0 * Math.cos(2.0 * t) - 2.0 * Math.cos(3.0 * t) - Math.cos(4.0 * t)
+        );
 
-            @Override
-            public void derive() {
-            }
-
-            @Override
-            public List<Double> getZeroPoints() {
-                zeroPoints = new ArrayList<>();
-                return zeroPoints;
-            }
-            @Override
-            public List<Double> getExtremePoints() {
-                extremePoints = new ArrayList<>();
-                return extremePoints;
-            }
-
-            @Override
-            public String getFunctionString() {
-                return standardFunction;
-            }
-        };
-        zeroPoints = polynomial.getZeroPoints();
-        extremePoints = polynomial.getExtremePoints();
+        if(polynomial instanceof PolynomialFunction){
+            zeroPoints = ((PolynomialFunction)polynomial).getZeroPoints();
+            extremePoints = ((PolynomialFunction)polynomial).getExtremePoints();
+        }
 
         GraphMouseListener graphMouseListener = new GraphMouseListener();
         addMouseWheelListener(graphMouseListener);
@@ -155,7 +133,9 @@ public class GraphPanel extends JPanel {
         drawGrid(g2d, width, height, step);
         drawFunction(g2d, width);
         drawLabelsAndScales(g2d, width, height, step);
-        drawInformationWindow(g2d);
+        if(polynomial instanceof PolynomialFunction){
+            drawInformationWindow(g2d);
+        }
     }
 
     private void clearBackground(Graphics2D g2d, int width, int height) {
@@ -264,7 +244,7 @@ public class GraphPanel extends JPanel {
 
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.PLAIN, 12));
-        String function = "Function: " + polynomial.getFunctionString();
+        String function = "Function: " + ((PolynomialFunction)polynomial).getFunctionString();
         String zeroPointsStr = "Zero Points: " + zeroPoints.stream().map(z -> String.format("%.2f", z)).collect(Collectors.joining(", "));
         String extremePointsStr = "Extreme Points: " + extremePoints.stream().map(e -> String.format("%.2f", e)).collect(Collectors.joining(", "));
         g2d.drawString(function, boxX + 10, boxY + 20);
