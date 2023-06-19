@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
-    private double zoom = 1.0;
-    private Vector2D offset = new Vector2D(0,0);
-    private double scale = 50.0;
-    private final Color backgroundColor = new Color(0.13f, 0.16f, 0.2f);
-    private Vector2D lastMousePosition = null;
-    private JTextField functionField;
-    public JButton resetButton;
     private final List<ParametricFunction> polynomials = new ArrayList<>();
+    private Vector2D offset = new Vector2D(0,0);
+    private Vector2D lastMousePosition = null;
+    private double zoom = 1.0;
+    private double scale = 50.0;
+    private JTextField functionField;
+    private final Color backgroundColor = new Color(0.13f, 0.16f, 0.2f);
     List<Color> colours = Arrays.asList(Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.PINK);
     private class GraphMouseListener extends MouseAdapter {
         @Override
@@ -76,20 +75,6 @@ public class GraphPanel extends JPanel {
     }
 
     public GraphPanel() {
-        // Parametric function will be added through either a secondary instance of graph panel or reinitialitianio
-        // default parametric function to test functionality. Using the textfield it will become a polynomial
-//        polynomial = t -> new Vector2D(
-//                16.0 * Math.pow(Math.sin(t), 3.0),
-//                13.0 * Math.cos(t) - 5.0 * Math.cos(2.0 * t) - 2.0 * Math.cos(3.0 * t) - Math.cos(4.0 * t)
-//        );
-
-//        if(polynomial instanceof PolynomialFunction){
-//            double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
-//            double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
-//            zeroPoints = ((PolynomialFunction)polynomial).getZeroPoints(minT, maxT, 0.01);
-//            extremePoints = ((PolynomialFunction)polynomial).getExtremePoints(minT, maxT, 0.01);
-//        }
-
         GraphMouseListener graphMouseListener = new GraphMouseListener();
         addMouseWheelListener(graphMouseListener);
         addMouseListener(graphMouseListener);
@@ -99,6 +84,12 @@ public class GraphPanel extends JPanel {
         createFunctionField();
         createCalculateButton();
         createDeriveButton();
+    }
+
+    private void createResetButton() {
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(new ResetActionListener());
+        add(resetButton);
     }
 
     private void createFunctionField() {
@@ -112,11 +103,6 @@ public class GraphPanel extends JPanel {
         add(calculateButton);
     }
 
-    private void createResetButton() {
-        resetButton = new JButton("Reset");
-        resetButton.addActionListener(new ResetActionListener());
-        add(resetButton);
-    }
     private void createDeriveButton() {
         JButton deriveButton = new JButton("Derive");
         deriveButton.addActionListener(new DeriveActionListener());
