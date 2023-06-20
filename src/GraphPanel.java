@@ -43,10 +43,13 @@ public class GraphPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(functions.size() < 3){
-                String function = functionField.getText();
+                String functionString = functionField.getText();
                 double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
                 double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
-                functions.add(new PolynomialFunction(function, minT, maxT));
+                PolynomialFunction function = new PolynomialFunction(functionString);
+                function.calcRoots(minT, maxT, 0.001);
+                function.calcExtremePoints(minT, maxT, 0.001);
+                functions.add(function);
                 repaint();
             } else {
                 GraphPanel.infoBox("You reached the maximum amount of Graphs", "MAX_GRAPHS_REACHED");

@@ -3,25 +3,22 @@ import java.util.Arrays;
 import java.util.*;
 
 public class PolynomialFunction implements ParametricFunction {
-    public String functionString;
+    private String functionString;
     private double[] coefficients;
     public List<Double> roots;
     public List<Double> extremePoints;
-    private static final Pattern TERM_PATTERN = Pattern.compile("([-+]?\\s*\\d*\\.?\\d*(?:/\\d+)*)?x(\\^(-?\\d+))?|([-+]?\\s*\\d+(/\\d+)?)");
 
-    public PolynomialFunction(String polynomialString, double start, double end) {
+    public PolynomialFunction(String polynomialString) {
         this.coefficients = new double[]{0};
         this.functionString = polynomialString;
         fromString(polynomialString);
-        calcRoots(start,end, 0.01);
-        calcExtremePoints(start,end, 0.01);
     }
 
     public void fromString(String polynomial) {
         if (polynomial == null || polynomial.isEmpty()) {
             throw new IllegalArgumentException("Polynomial string cannot be null or empty");
         }
-
+        Pattern TERM_PATTERN = Pattern.compile("([-+]?\\s*\\d*\\.?\\d*(?:/\\d+)*)?x(\\^(-?\\d+))?|([-+]?\\s*\\d+(/\\d+)?)");
         Matcher matcher = TERM_PATTERN.matcher(polynomial);
 
         while (matcher.find()) {
@@ -126,7 +123,7 @@ public class PolynomialFunction implements ParametricFunction {
         functionString =  sb.toString();
     }
 
-    private void calcRoots(double start, double end, double step) {
+    public void calcRoots(double start, double end, double step) {
         roots = new ArrayList<>();
         Vector2D prevPoint = evaluate(start);
         for (double x = start + step; x <= end; x += step) {
