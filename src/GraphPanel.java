@@ -14,7 +14,7 @@ public class GraphPanel extends JPanel {
     private double zoom = 1.0;
     private JTextField functionField;
     private final Color backgroundColor = new Color(0.13f, 0.16f, 0.2f);
-    List<Color> colours = Arrays.asList(Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.PINK);
+    List<Color> colorList = Arrays.asList(Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.PINK);
     private class GraphMouseListener extends MouseAdapter {
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
@@ -202,7 +202,7 @@ public class GraphPanel extends JPanel {
             }
 
             g2d.setStroke(new BasicStroke(2.0f));
-            g2d.setColor(colours.get(x % colours.size()));
+            g2d.setColor(colorList.get(x % colorList.size()));
             g2d.draw(path);
         }
     }
