@@ -3,10 +3,10 @@ import java.util.Arrays;
 import java.util.*;
 
 public class PolynomialFunction implements ParametricFunction {
-
+    private String functionString;
     private double[] coefficients;
-    public String functionString;
-    private static final Pattern TERM_PATTERN = Pattern.compile("([-+]?\\s*\\d*\\.?\\d*(?:/\\d+)*)?x(\\^(-?\\d+))?|([-+]?\\s*\\d+(/\\d+)?)");
+    public List<Double> roots;
+    public List<Double> extremePoints;
 
     public PolynomialFunction(String polynomialString) {
         this.coefficients = new double[]{0};
@@ -18,7 +18,7 @@ public class PolynomialFunction implements ParametricFunction {
         if (polynomial == null || polynomial.isEmpty()) {
             throw new IllegalArgumentException("Polynomial string cannot be null or empty");
         }
-
+        Pattern TERM_PATTERN = Pattern.compile("([-+]?\\s*\\d*\\.?\\d*(?:/\\d+)*)?x(\\^(-?\\d+))?|([-+]?\\s*\\d+(/\\d+)?)");
         Matcher matcher = TERM_PATTERN.matcher(polynomial);
 
         while (matcher.find()) {
@@ -123,21 +123,20 @@ public class PolynomialFunction implements ParametricFunction {
         functionString =  sb.toString();
     }
 
-    public List<Double> getZeroPoints(double start, double end, double step) {
-        List<Double> zeros = new ArrayList<>();
+    public void calcRoots(double start, double end, double step) {
+        roots = new ArrayList<>();
         Vector2D prevPoint = evaluate(start);
         for (double x = start + step; x <= end; x += step) {
             Vector2D point = evaluate(x);
             if (prevPoint.y * point.y <= 0) {
-                zeros.add(x - step / 2);
+                roots.add(x - step / 2);
             }
             prevPoint = point;
         }
-        return zeros;
     }
 
-    public List<Double> getExtremePoints(double start, double end, double step) {
-        List<Double> extremes = new ArrayList<>();
+    public void calcExtremePoints(double start, double end, double step) {
+        extremePoints = new ArrayList<>();
         Vector2D startPoint = evaluate(start);
         Vector2D nextPoint = evaluate(start + step);
         double prevSlope = (nextPoint.y - startPoint.y) / step;
@@ -145,11 +144,10 @@ public class PolynomialFunction implements ParametricFunction {
             Vector2D point = evaluate(x);
             double slope = (point.y - evaluate(x - step).y) / step;
             if (prevSlope * slope <= 0) {
-                extremes.add(x - step);
+                extremePoints.add(x - step);
             }
             prevSlope = slope;
         }
-        return extremes;
     }
 
     public String getFunctionString() {
