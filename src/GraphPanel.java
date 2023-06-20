@@ -176,7 +176,7 @@ public class GraphPanel extends JPanel {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(width, 0)).x;
 
-        int numSteps = (int) Math.max(5000, 10000 * zoom);
+        int numSteps = getWidth() * 10;
 
         double tStep = (maxT - minT) / numSteps;
 
@@ -188,17 +188,9 @@ public class GraphPanel extends JPanel {
             path.moveTo(initialPosition.x, initialPosition.y);
 
             for (int i = 0; i < numSteps; i += 1) {
-                double t1 = t + tStep;
-                double t2 = t1 + tStep;
-                double t3 = t2 + tStep;
-
-                Vector2D p1 = toScreenCoordinates(functions.get(x).evaluate(t1));
-                Vector2D p2 = toScreenCoordinates(functions.get(x).evaluate(t2));
-                Vector2D p3 = toScreenCoordinates(functions.get(x).evaluate(t3));
-
-                path.curveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-
-                t = t3;
+                t += tStep;
+                Vector2D position = toScreenCoordinates(functions.get(x).evaluate(t));
+                path.lineTo(position.x, position.y);
             }
 
             g2d.setStroke(new BasicStroke(2.0f));
