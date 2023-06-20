@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
-    private final List<ParametricFunction> polynomials = new ArrayList<>();
+    private final List<ParametricFunction> functions = new ArrayList<>();
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = null;
     private double zoom = 1.0;
@@ -42,11 +42,11 @@ public class GraphPanel extends JPanel {
     private class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(polynomials.size() < 3){
+            if(functions.size() < 3){
                 String function = functionField.getText();
                 double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
                 double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
-                polynomials.add(new PolynomialFunction(function, minT, maxT));
+                functions.add(new PolynomialFunction(function, minT, maxT));
                 repaint();
             } else {
                 GraphPanel.infoBox("You reached the maximum amount of Graphs", "MAX_GRAPHS_REACHED");
@@ -180,11 +180,11 @@ public class GraphPanel extends JPanel {
 
         double tStep = (maxT - minT) / numSteps;
 
-        for (int x = 0; x < polynomials.size(); x++) {
+        for (int x = 0; x < functions.size(); x++) {
             path = new GeneralPath();
             double t = minT;
 
-            Vector2D initialPosition = toScreenCoordinates(polynomials.get(x).evaluate(t));
+            Vector2D initialPosition = toScreenCoordinates(functions.get(x).evaluate(t));
             path.moveTo(initialPosition.x, initialPosition.y);
 
             for (int i = 0; i < numSteps; i += 1) {
@@ -192,9 +192,9 @@ public class GraphPanel extends JPanel {
                 double t2 = t1 + tStep;
                 double t3 = t2 + tStep;
 
-                Vector2D p1 = toScreenCoordinates(polynomials.get(x).evaluate(t1));
-                Vector2D p2 = toScreenCoordinates(polynomials.get(x).evaluate(t2));
-                Vector2D p3 = toScreenCoordinates(polynomials.get(x).evaluate(t3));
+                Vector2D p1 = toScreenCoordinates(functions.get(x).evaluate(t1));
+                Vector2D p2 = toScreenCoordinates(functions.get(x).evaluate(t2));
+                Vector2D p3 = toScreenCoordinates(functions.get(x).evaluate(t3));
 
                 path.curveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
 
@@ -239,7 +239,7 @@ public class GraphPanel extends JPanel {
         Font font = new Font("Arial", Font.PLAIN, 12);
 
         int index = 0;
-        for (Object function : polynomials) {
+        for (Object function : functions) {
             if (function instanceof PolynomialFunction polyFunction) {
                 int boxX = 10 + index * (boxWidth + 10);
 
