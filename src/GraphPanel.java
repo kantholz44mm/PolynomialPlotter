@@ -280,18 +280,18 @@ public class GraphPanel extends JPanel {
             g2d.fillOval((int) screenPoint.x - 3, (int) screenPoint.y - 3, 6, 6);
             if (screenPoint.distance(lastMousePosition) < 5) {
 
-                String text = String.format("(%.2f, %.2f)", intersection.x, intersection.y);
+                String intersectionPoint = String.format("(%.2f, %.2f)", intersection.x, intersection.y);
                 int x = (int) screenPoint.x + 5;
                 int y = (int) screenPoint.y - 5;
 
-                int textWidth = metrics.stringWidth(text);
+                int textWidth = metrics.stringWidth(intersectionPoint);
                 int textHeight = metrics.getHeight();
 
                 g2d.setColor(new Color(0, 0, 0, 128));
                 g2d.fillRect(x - 2, y - textHeight, textWidth + 4, textHeight + 2);
 
                 g2d.setColor(Color.YELLOW);
-                g2d.drawString(text, x, y);
+                g2d.drawString(intersectionPoint, x, y);
             }
         }
     }
