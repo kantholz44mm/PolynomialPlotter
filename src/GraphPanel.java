@@ -277,7 +277,7 @@ public class GraphPanel extends JPanel {
 
         for (Vector2D intersection : intersectionPoints) {
             Vector2D screenPoint = toScreenCoordinates(intersection);
-            g2d.fillOval((int) screenPoint.x - 5, (int) screenPoint.y - 5, 10, 10);
+            g2d.fillOval((int) screenPoint.x - 3, (int) screenPoint.y - 3, 6, 6);
             if (screenPoint.distance(lastMousePosition) < 5) {
 
                 String text = String.format("(%.2f, %.2f)", intersection.x, intersection.y);
@@ -292,8 +292,6 @@ public class GraphPanel extends JPanel {
 
                 g2d.setColor(Color.YELLOW);
                 g2d.drawString(text, x, y);
-
-                break;
             }
         }
     }
