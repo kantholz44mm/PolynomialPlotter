@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
     private Vector2D offset = new Vector2D(0,0);
-    private Vector2D lastMousePosition = null;
+    private Vector2D lastMousePosition = new Vector2D(0,0);
     private double zoom = 1.0;
     private JTextField functionField;
     private final Color backgroundColor = new Color(0.13f, 0.16f, 0.2f);
@@ -35,6 +35,12 @@ public class GraphPanel extends JPanel {
             offset.x += delta.x / getScale();
             offset.y -= delta.y / getScale();
             lastMousePosition = currentMousePosition;
+            repaint();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e){
+            lastMousePosition = new Vector2D(e.getX(), e.getY());
             repaint();
         }
     }
@@ -132,6 +138,7 @@ public class GraphPanel extends JPanel {
         drawFunctions(g2d, width);
         drawLabelsAndScales(g2d, width, height, step);
         drawInformationWindows(g2d);
+        drawIntersections(g2d);
     }
 
     private void clearBackground(Graphics2D g2d, int width, int height) {
@@ -259,6 +266,66 @@ public class GraphPanel extends JPanel {
                 index++;
             }
         }
+    }
+
+    private void drawIntersections(Graphics2D g2d){
+        List<Vector2D> intersectionPoints = calculateIntersections();
+        g2d.setColor(Color.YELLOW);
+        Font font = new Font("Arial", Font.BOLD, 14);
+        g2d.setFont(font);
+        FontMetrics metrics = g2d.getFontMetrics(font);
+
+        for (Vector2D intersection : intersectionPoints) {
+            Vector2D screenPoint = toScreenCoordinates(intersection);
+            g2d.fillOval((int) screenPoint.x - 5, (int) screenPoint.y - 5, 10, 10);
+            if (screenPoint.distance(lastMousePosition) < 5) {
+
+                String text = String.format("(%.2f, %.2f)", intersection.x, intersection.y);
+                int x = (int) screenPoint.x + 5;
+                int y = (int) screenPoint.y - 5;
+
+                int textWidth = metrics.stringWidth(text);
+                int textHeight = metrics.getHeight();
+
+                g2d.setColor(new Color(0, 0, 0, 128));
+                g2d.fillRect(x - 2, y - textHeight, textWidth + 4, textHeight + 2);
+
+                g2d.setColor(Color.YELLOW);
+                g2d.drawString(text, x, y);
+
+                break;
+            }
+        }
+    }
+
+    private List<Vector2D> calculateIntersections() {
+        List<Vector2D> intersections = new ArrayList<>();
+
+        double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
+        double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
+        double step = 0.001;
+        if (functions.size() < 2) {
+            return intersections;
+        }
+
+        for (double x = minT; x <= maxT; x += step) {
+            for (int i = 0; i < functions.size(); i++) {
+                for (int j = i + 1; j < functions.size(); j++) {
+                    double y1Prev = functions.get(i).evaluate(x - step).y;
+                    double y1Curr = functions.get(i).evaluate(x).y;
+                    double y2Prev = functions.get(j).evaluate(x - step).y;
+                    double y2Curr = functions.get(j).evaluate(x).y;
+
+                    // subtract values and calculate approximate roots => same as calcRoots
+                    if ((y1Prev - y2Prev) * (y1Curr - y2Curr) < 0) {
+                        double intersectX = x - step / 2;
+                        double intersectY = (y1Curr + y2Curr) / 2;
+                        intersections.add(new Vector2D(intersectX, intersectY));
+                    }
+                }
+            }
+        }
+        return intersections;
     }
 
     private Vector2D toScreenCoordinates(Vector2D position) {
