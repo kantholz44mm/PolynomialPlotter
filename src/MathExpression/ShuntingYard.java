@@ -30,6 +30,7 @@ public class ShuntingYard {
                 break;
             }
 
+            case Function:
             case Parenthesis_Left:
             {
                 shunt.push(token);

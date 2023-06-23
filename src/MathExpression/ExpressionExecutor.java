@@ -64,6 +64,22 @@ public class ExpressionExecutor {
                 break;
             }
 
+            case Function: 
+            {
+                double operand = numericStack.pop();
+                double result = 0;
+                switch(token.literal) {
+                    case "sin": result = Math.sin(operand); break;
+                    case "cos": result = Math.cos(operand); break;
+                    case "tan": result = Math.tan(operand); break;
+                    case "sqrt": result = Math.sqrt(operand); break;
+                    case "log": result = Math.log10(operand); break;
+                    case "ln": result = Math.log(operand); break;
+                }
+                numericStack.push(result);
+                break;
+            }
+
             default: 
             {
                 break;
@@ -74,7 +90,7 @@ public class ExpressionExecutor {
     public double evaluate() {
         Stack<Token> executionStack = new Stack<>();
         Stack<Double> numericStack = new Stack<>();
-
+        
         executionStack.addAll(tokens);
         Collections.reverse(executionStack);
 

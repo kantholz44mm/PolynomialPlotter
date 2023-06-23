@@ -4,14 +4,14 @@ public class Token {
     // in order of precedence
     public enum Type {
         Number,
-        Function,
         Exponentiation,
-        Multiplication,
         Division,
+        Multiplication,
         Addition,
         Subtraction,
         Parenthesis_Left,
-        Parenthesis_Right;
+        Parenthesis_Right,
+        Function;
 
         public boolean isOperator() {
             switch(this) {

@@ -2,7 +2,7 @@ import MathExpression.ExpressionExecutor;
 
 public class FunctionGrapher {
     public static void main(String[] args) {
-        ExpressionExecutor exec = new ExpressionExecutor("15 ^ 2+ 123 / (12.2 ^ 12.224 * 2.0)");
+        ExpressionExecutor exec = new ExpressionExecutor("cos(4 * tan(2 ^ sin(2)))");
         System.out.println(exec.evaluate());
     }
 }
