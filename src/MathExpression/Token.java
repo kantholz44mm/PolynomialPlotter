@@ -4,14 +4,15 @@ public class Token {
     // in order of precedence
     public enum Type {
         Number,
+        Parameter,
         Exponentiation,
         Division,
         Multiplication,
         Addition,
         Subtraction,
+        Function,
         Parenthesis_Left,
-        Parenthesis_Right,
-        Function;
+        Parenthesis_Right;
 
         public boolean isOperator() {
             switch(this) {
@@ -20,6 +21,7 @@ public class Token {
                 case Multiplication:
                 case Addition:
                 case Subtraction:
+                case Function:
                     return true;
                 default: 
                     return false;

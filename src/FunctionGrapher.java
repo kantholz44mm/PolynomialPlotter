@@ -1,8 +1,17 @@
-import MathExpression.ExpressionExecutor;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class FunctionGrapher {
     public static void main(String[] args) {
-        ExpressionExecutor exec = new ExpressionExecutor("cos(4 * tan(2 ^ sin(2)))");
-        System.out.println(exec.evaluate());
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Polynomial Plotter");
+            frame.setSize(800, 600);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            GraphPanel graphPanel = new GraphPanel();
+            frame.add(graphPanel);
+
+            frame.setVisible(true);
+        });
     }
 }

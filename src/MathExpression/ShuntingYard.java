@@ -11,6 +11,7 @@ public class ShuntingYard {
     private static void processToken(Token token, List<Token> postfix, Stack<Token> shunt) {
         switch(token.type) {
             case Number: 
+            case Parameter:
             {
                 postfix.add(token); 
                 break;
@@ -45,6 +46,9 @@ public class ShuntingYard {
                 }
 
                 shunt.pop();
+                if(!shunt.isEmpty() && shunt.peek().type == Type.Function) {
+                    postfix.add(shunt.pop());
+                }
                 break;
             }
 
@@ -66,6 +70,7 @@ public class ShuntingYard {
         while (!shunt.isEmpty()) {
             postfix.add(shunt.pop());
         }
+        
         return postfix;
     }
 }
