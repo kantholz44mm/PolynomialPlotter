@@ -8,7 +8,7 @@ public class Frame extends JFrame {
         this.setExtendedState(this.MAXIMIZED_BOTH);
         this.setResizable(true);        //Frame is resizable
         this.setTitle("Function Plotter");
-        ImageIcon logo = new ImageIcon(".\\FunctionPlotterLogoPLACEHOLDER.png"); //"converts" the .png into an ImageIcon
+        ImageIcon logo = new ImageIcon(".\\FunctionPlotterLogo.png"); //"converts" the .png into an ImageIcon
         this.setIconImage(logo.getImage()); //Sets the ImageIcon as the Icon for the Frame
 
         ControlPanel controlPanel = new ControlPanel(); //Initialisation of the ControlPanel

@@ -4,28 +4,42 @@ import java.awt.event.*;
 
 public class PolynomialFunctionControl extends JPanel {
 
+    int count = 1; //Counts the number of FunctionInputs, initial set to 1 because the panel is initialised with one FunctionInput
+
+    JPanel functionInputPosition = new JPanel(); //Panel that holds the FunctionInput (for Layout purposes)
+
     PolynomialFunctionControl() {
 
         this.setBackground(Color.magenta);
 
-        GridLayout PolyFunctionControlLayout = new GridLayout(10,0);
+        BorderLayout PolyFunctionControlLayout = new BorderLayout(5,0);
         this.setLayout(PolyFunctionControlLayout);
 
-        FunctionInput functionInput = new FunctionInput(); //Initialisation of the Pane that holds the input for the Polynomial Function
+        GridLayout functionInputPositionLayout = new GridLayout(0,1,10,4);
+        functionInputPosition.setLayout(functionInputPositionLayout);
+        functionInputPosition.setBackground(Color.gray);
+        functionInputPosition.add(new FunctionInput(0));
 
-        this.add(functionInput);
+        //FunctionInput functionInput = new FunctionInput(0); //Initialisation of the Pane that holds the input for the Polynomial Function
+        //this.add(functionInput);
+
+        this.add(functionInputPosition, BorderLayout.PAGE_START);
+        this.add(new HelpPanel(), BorderLayout.PAGE_END);
 
 
     }
 
     private class FunctionInput extends JPanel {
 
-        int count = 0;
         Color[] Colors = {Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.GRAY};
         JComboBox<Color> colorPicker = new JComboBox<>(Colors);   //Combo Box to pick the Color of the Function
-
         GridBagLayout InputLayout = new GridBagLayout();
         GridBagConstraints gbc = new GridBagConstraints();
+        private final int ID;
+
+        public int getID() {
+            return ID;
+        }
         private class ColorBoxListener implements ActionListener {
 
             @Override
@@ -38,10 +52,11 @@ public class PolynomialFunctionControl extends JPanel {
         private class CalculateActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("ID: " + getID());
 
                 if (count < 3) {
                     count++;
-                    PolynomialFunctionControl.this.add(new FunctionInput());
+                    functionInputPosition.add(new FunctionInput(count-1));
                     PolynomialFunctionControl.this.revalidate();
                 }
             }
@@ -162,8 +177,9 @@ public class PolynomialFunctionControl extends JPanel {
             this.add(colorPicker);
         }
 
-        public FunctionInput() {
+        public FunctionInput(int ID) {
 
+            this.ID = ID;
             this.setBackground(Color.gray);
 
             gbc.fill = GridBagConstraints.BOTH; //Sets the Object to fill the Horizontal Space
@@ -177,4 +193,39 @@ public class PolynomialFunctionControl extends JPanel {
             createDeleteButton();
         }
     }
+
+    private class HelpPanel extends JPanel {
+
+        GridLayout HelpLabelLayout = new GridLayout(1, 0);
+
+        public void createHelpButton() {
+            JButton help = new JButton("Help");
+            help.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            add(help);
+        }
+
+        public void createScreenshotButton() {
+            JButton screenshot = new JButton("Screenshot");
+            screenshot.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            add(screenshot);
+        }
+
+        public void createResetButton() {
+            JButton reset = new JButton("Reset");
+            reset.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            add(reset);
+        }
+
+        HelpPanel() {
+
+
+            setLayout(HelpLabelLayout);
+            this.setBackground(Color.cyan);
+
+            createHelpButton();
+            createScreenshotButton();
+            createResetButton();
+        }
+    }
+
 }
