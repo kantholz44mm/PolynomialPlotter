@@ -194,7 +194,7 @@ public class PolynomialFunctionControl extends JPanel {
         }
     }
 
-    private class HelpPanel extends JPanel {
+    private class static HelpPanel extends JPanel {
 
         GridLayout HelpLabelLayout = new GridLayout(1, 0);
 
