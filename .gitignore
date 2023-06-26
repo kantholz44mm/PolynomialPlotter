@@ -1,0 +1,5 @@
+# intellij specific
+.idea/
+
+# vscode specific
+.vscode/

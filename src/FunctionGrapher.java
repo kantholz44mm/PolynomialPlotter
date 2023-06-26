@@ -1,4 +1,5 @@
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class FunctionGrapher {
     public static void main(String[] args) {
