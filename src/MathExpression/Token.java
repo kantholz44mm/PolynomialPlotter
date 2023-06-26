@@ -15,17 +15,10 @@ public class Token {
         Parenthesis_Right;
 
         public boolean isOperator() {
-            switch(this) {
-                case Exponentiation:
-                case Division:
-                case Multiplication:
-                case Addition:
-                case Subtraction:
-                case Function:
-                    return true;
-                default: 
-                    return false;
-            }
+            return switch(this) {
+                case Exponentiation, Division, Multiplication, Addition, Subtraction, Function -> true;
+                default -> false;
+            };
         }
     }
 

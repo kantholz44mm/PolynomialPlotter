@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class Tokenizer {
     private static final HashMap<Token.Type, Pattern> patterns = new HashMap<>() {{
-        put(Token.Type.Number,              Pattern.compile("^(\\d+(?:\\.\\d+)?)"));
+        put(Token.Type.Number,              Pattern.compile("^((?:(?<=[*\\-+/(])?-)?\\d+(?:\\.\\d+)?)"));
         put(Token.Type.Parameter,           Pattern.compile("^([a-z](?=[^a-z])|[a-z]$)"));
         put(Token.Type.Function,            Pattern.compile("^(sin|cos|tan|sqrt|log|ln)"));
         put(Token.Type.Addition,            Pattern.compile("^\\+"));
