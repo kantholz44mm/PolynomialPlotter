@@ -5,7 +5,7 @@ public class Frame extends JFrame {
     Frame() {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(1400,900); //Sets the Size in case the Window is not maximized
-        this.setExtendedState(this.MAXIMIZED_BOTH);
+        this.setExtendedState(MAXIMIZED_BOTH);
         this.setResizable(true);        //Frame is resizable
         this.setTitle("Function Plotter");
         ImageIcon logo = new ImageIcon(".\\FunctionPlotterLogo.png"); //"converts" the .png into an ImageIcon
