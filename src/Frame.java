@@ -14,7 +14,6 @@ public class Frame extends JFrame {
         ControlPanel controlPanel = new ControlPanel(); //Initialisation of the ControlPanel
         GraphPanel graphPanel = new GraphPanel();       //Initialisation of the GraphPanel
 
-
         GridBagLayout frameLayout = new GridBagLayout();
         setLayout(frameLayout);
 
@@ -40,6 +39,4 @@ public class Frame extends JFrame {
 
         this.setVisible(true);
     }
-
-
 }

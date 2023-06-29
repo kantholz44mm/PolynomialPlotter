@@ -16,6 +16,25 @@ public class FunctionControlPanel extends JPanel {
 
     private final PolynomialFunctionControl polynomialFunctionControl;
 
+    public FunctionControlPanel(int count, List<FunctionControlPanel> functionControlPanelList, JPanel functionInputPosition, PolynomialFunctionControl polynomialFunctionControl) {
+        this.functionControlPanelList = functionControlPanelList;
+        this.functionInputPosition = functionInputPosition;
+        this.count = count;
+        this.polynomialFunctionControl = polynomialFunctionControl;
+        this.setBackground(Color.blue);
+
+
+        gbc.fill = GridBagConstraints.BOTH; //Sets the Object to fill the Horizontal Space
+        gbc.insets = new Insets(4, 1, 4, 1); //Sets the distance between the Objects
+        setLayout(InputLayout);
+
+        createFunctionField();
+        createColorPicker();
+        createCalculateButton();
+        createDeriveButton();
+        createDeleteButton();
+    }
+
     private class ColorBoxListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -38,7 +57,6 @@ public class FunctionControlPanel extends JPanel {
 
         }
     }
-
     private void removeFunctionControlPanel(FunctionControlPanel functionControlPanel) {
 
         if (functionControlPanelList.size() > 1) {
@@ -169,22 +187,5 @@ public class FunctionControlPanel extends JPanel {
             this.add(colorPicker);
         }
 
-        public FunctionControlPanel(int count, List<FunctionControlPanel> functionControlPanelList, JPanel functionInputPosition, PolynomialFunctionControl polynomialFunctionControl) {
-            this.functionControlPanelList = functionControlPanelList;
-            this.functionInputPosition = functionInputPosition;
-            this.count = count;
-            this.polynomialFunctionControl = polynomialFunctionControl;
-            this.setBackground(Color.blue);
 
-
-            gbc.fill = GridBagConstraints.BOTH; //Sets the Object to fill the Horizontal Space
-            gbc.insets = new Insets(4, 1, 4, 1); //Sets the distance between the Objects
-            setLayout(InputLayout);
-
-            createFunctionField();
-            createColorPicker();
-            createCalculateButton();
-            createDeriveButton();
-            createDeleteButton();
-        }
 }
