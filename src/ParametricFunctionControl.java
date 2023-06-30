@@ -6,200 +6,71 @@ import java.awt.event.ActionListener;
 
 public class ParametricFunctionControl extends JPanel {
 
-    GridBagLayout ParametricInputPosition = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-    JTextField functionFieldX = new JTextField();
-    JTextField functionFieldY = new JTextField();
-    JTextField rangeStart = new JTextField();
-    JTextField rangeEnd = new JTextField();
 
     ParametricFunctionControl() {
 
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(4, 2, 4, 2);
-        setLayout(ParametricInputPosition);
+        BorderLayout ParaFunctionControlLayout = new BorderLayout(0, 0);
+        this.setLayout(ParaFunctionControlLayout);
 
-        createFunctionFieldX(); //Creates the TextArea for the "X:" and the TextField for the actual input
-        createFunctionFieldY();
-        createRangeSetters();
-        createDeleteButton();
-        createCalculateButton();
-
-        this.setBackground(Color.GRAY);
+        this.add(new ParametricFunctionControlPanel(), BorderLayout.CENTER);
+        this.add(new ParametricHelpPanel(), BorderLayout.PAGE_END);
     }
 
-    private class DeleteActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            functionFieldX.setText(null);
-            functionFieldY.setText(null);
-            rangeStart.setText(null);
-            rangeEnd.setText(null);
-        }
-    }
+    private class ParametricHelpPanel extends JPanel {
 
-    public void createFunctionFieldX() {
+        GridLayout ParaHelpLabelLayout = new GridLayout(1, 2);
 
-        //Creates the "X:"
-        JTextField X = new JTextField("X:");
-        X.setEditable(false);
-        X.setHorizontalAlignment(JTextField.RIGHT);
-        X.setFont(new Font("Times New Roman", Font.BOLD, 20));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        gbc.ipadx = 5;
-        gbc.ipady = 0;
-        ParametricInputPosition.setConstraints(X, gbc);
-        add(X);
-
-        //Creates the TextField for the actual input
-        functionFieldX.setHorizontalAlignment(JTextField.CENTER);
-        functionFieldX.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 5;
-        gbc.ipady = 20;
-
-        ParametricInputPosition.setConstraints(functionFieldX, gbc);
-        add(functionFieldX);
-    }
-
-    public void createFunctionFieldY() {
-
-        //Creates the "Y:"
-        JTextField Y = new JTextField("Y:");
-        Y.setEditable(false);
-        Y.setHorizontalAlignment(JTextField.RIGHT);
-        Y.setFont(new Font("Times New Roman", Font.BOLD, 20));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
-        gbc.ipadx = 5;
-        gbc.ipady = 0;
-        ParametricInputPosition.setConstraints(Y, gbc);
-        add(Y);
-
-        //Creates the TextField for the actual input
-        //functionFieldY.setBorder(BorderFactory.createEmptyBorder());
-        functionFieldY.setHorizontalAlignment(JTextField.CENTER);
-        functionFieldY.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 5;
-        gbc.weightx = 3;
-        gbc.ipady = 20;
-
-        ParametricInputPosition.setConstraints(functionFieldY, gbc);
-        add(functionFieldY);
-    }
-
-    private void createRangeSetters() {
-
-        //Creates the first Box to declare the Range
-        rangeStart.setPreferredSize(new Dimension(85, 20));
-        rangeStart.setHorizontalAlignment(JTextField.CENTER);
-        rangeStart.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;
-        gbc.ipadx = 0;
-        gbc.ipady = 20;
-        gbc.weightx = 1;
-        ParametricInputPosition.setConstraints(rangeStart, gbc);
-        add(rangeStart);
-
-        AbstractDocument RangeStartDoc = (AbstractDocument) rangeStart.getDocument(); //Sets a DocumentFilter to the TextField to only allow numeric input
-        RangeStartDoc.setDocumentFilter(new RangeNumericFilter());
-
-
-        //Creates the "> = t < =" in the middle
-        JTextField rangeParameter = new JTextField("< = t < =");
-        rangeParameter.setEditable(false);
-        rangeParameter.setHorizontalAlignment(JTextField.CENTER);
-        rangeParameter.setFont(new Font("Arial", Font.PLAIN, 20));
-        gbc.gridx = 2;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
-        gbc.ipady = 0;      //Could be deleted
-        gbc.weightx = 1;    //Could be deleted
-        ParametricInputPosition.setConstraints(rangeParameter, gbc);
-        add(rangeParameter);
-
-        //Creates the second Box to declare the Range
-        rangeEnd.setPreferredSize(new Dimension(85, 20));
-        rangeEnd.setHorizontalAlignment(JTextField.CENTER);
-        rangeEnd.setFont(new Font("Arial", Font.PLAIN, 16));
-        gbc.gridx = 3;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
-        gbc.ipady = 20;
-        gbc.weightx = 1;    //Could be deleted
-        ParametricInputPosition.setConstraints(rangeEnd, gbc);
-        add(rangeEnd);
-
-        AbstractDocument RangeEndDoc = (AbstractDocument) rangeEnd.getDocument(); //Sets a DocumentFilter to the TextField to only allow numeric input
-        RangeEndDoc.setDocumentFilter(new RangeNumericFilter());
-
-    }
-
-    private void createDeleteButton() {
-        JButton delete = new JButton("Delete");
-        delete.setPreferredSize(new Dimension(70, 20));
-        delete.setFocusable(false);
-        delete.addActionListener(new DeleteActionListener());
-        gbc.gridx = 4;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
-        gbc.ipady = 0;
-        gbc.weightx = 1;    //Could be deleted
-        ParametricInputPosition.setConstraints(delete, gbc);
-        add(delete);
-    }
-
-
-    private void createCalculateButton() {
-        JButton calculate = new JButton("Calculate");
-        calculate.setPreferredSize(new Dimension(70, 20));
-        calculate.setFocusable(false);
-        gbc.gridx = 5;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
-        gbc.ipady = 0;      //Could be deleted
-        gbc.weightx = 1;    //Could be deleted
-        ParametricInputPosition.setConstraints(calculate, gbc);
-        add(calculate);
-    }
-    private static class RangeNumericFilter extends DocumentFilter {
-
-        @Override
-        public void insertString(FilterBypass fb, int offset, String range, AttributeSet attr) throws BadLocationException {
-
-            if (isNumeric(range))
-                super.insertString(fb, offset, range, attr);
-        }
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String range, AttributeSet attrs) throws BadLocationException {
-
-            if (isNumeric(range))
-                super.replace(fb, offset, length, range, attrs);
-        }
-        public boolean isNumeric(String range) {
-
-            if (range == null) return true;
-
-            try {
-                int d = Integer.parseInt(range);
-            } catch (NumberFormatException nfe) {
-
-                return false;
+        public class HelpActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Display Helpwindow
             }
-            return true;
         }
 
+        public class ScreenshotActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Implement Screenshot function
+            }
+        }
+
+        public class ResetActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Connect to Reset functionality
+            }
+        }
+
+        ParametricHelpPanel() {
+            setLayout(ParaHelpLabelLayout);
+            setPreferredSize(new Dimension(ParametricFunctionControl.this.getWidth(), 30));
+
+            createResetButton();
+            createHelpButton();
+            createScreenshotButton();
+        }
+
+        public void createHelpButton() {
+            JButton help = new JButton("Help");
+            help.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            help.addActionListener(new HelpActionListener());
+            add(help);
+        }
+
+        public void createScreenshotButton() {
+            JButton screenshot = new JButton("Screenshot");
+            screenshot.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            screenshot.addActionListener(new ScreenshotActionListener());
+            add(screenshot);
+        }
+
+        public void createResetButton() {
+            JButton reset = new JButton("Reset");
+            reset.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            reset.addActionListener(new ResetActionListener());
+            add(reset);
+        }
     }
-
-
 }
 
 

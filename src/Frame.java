@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 public class Frame extends JFrame {
@@ -27,6 +29,7 @@ public class Frame extends JFrame {
         gbc.weighty = 1;    //Weighting of the available space on the Y-Axis
         frameLayout.setConstraints(controlPanel, gbc);
         this.add(controlPanel);
+        controlPanel.addChangeListener(new TabChangeListener());
 
 
         gbc.gridx = 1;
@@ -39,4 +42,12 @@ public class Frame extends JFrame {
 
         this.setVisible(true);
     }
+
+    private class TabChangeListener implements ChangeListener {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            //TODO: Clear Graph Panel
+        }
+    }
+
 }

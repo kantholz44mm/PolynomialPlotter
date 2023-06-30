@@ -13,8 +13,9 @@ public class FunctionControlPanel extends JPanel {
     private int count;
     private final List<FunctionControlPanel> functionControlPanelList;
     private final JPanel functionInputPosition;
-
     private final PolynomialFunctionControl polynomialFunctionControl;
+
+    JTextField functionField = new JTextField(20);  //Textfield for the Function
 
     public FunctionControlPanel(int count, List<FunctionControlPanel> functionControlPanelList, JPanel functionInputPosition, PolynomialFunctionControl polynomialFunctionControl) {
         this.functionControlPanelList = functionControlPanelList;
@@ -40,13 +41,23 @@ public class FunctionControlPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             Color selectedColor = (Color) colorPicker.getSelectedItem(); //Gets the selected Color from the ComboBox (cast to Color)
             System.out.println("Selected color: " + selectedColor); //Test if the selected Color is correct
+            //TODO: Connect to the function color "setter"
         }
     }
 
     private class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            //System.out.println(functionField.getText());
+            //TODO: Connect to the function calculator
             System.out.println("Calculate from: " + count);
+        }
+    }
+
+    public class DeriveActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //TODO: Connect to the function deriver
         }
     }
 
@@ -54,7 +65,7 @@ public class FunctionControlPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             removeFunctionControlPanel(FunctionControlPanel.this);
-
+            //TODO: Connect to the function deleter to delete function on the GraphPanel
         }
     }
     private void removeFunctionControlPanel(FunctionControlPanel functionControlPanel) {
@@ -130,7 +141,6 @@ public class FunctionControlPanel extends JPanel {
         }
 
         public void createFunctionField() {
-            JTextField functionField = new JTextField(20);  //Textfield for the Function
 
             gbc.gridwidth = 2;
             gbc.gridx = 0;
@@ -139,6 +149,17 @@ public class FunctionControlPanel extends JPanel {
             gbc.ipadx = 10; //Width of the TextField
             InputLayout.setConstraints(functionField, gbc);
             add(functionField);
+        }
+        public void createColorPicker() {
+            JComboBox<Color> colorPicker = new JComboBox<>(Colors);   //Combo Box to pick the Color of the Function
+            colorPicker.setRenderer(new ColorListRenderer());
+            colorPicker.addActionListener(new ColorBoxListener());
+
+            gbc.weightx = 1;
+            gbc.gridx = 2;
+            gbc.gridy = 0;  //Coordinates from where the Object is set
+            InputLayout.setConstraints(colorPicker, gbc);
+            this.add(colorPicker);
         }
 
         public void createCalculateButton() {
@@ -156,6 +177,7 @@ public class FunctionControlPanel extends JPanel {
         public void createDeriveButton() {
             JButton derive = new JButton("Derive");     //Button to derive the Function
             derive.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            derive.addActionListener(new DeriveActionListener());
 
             gbc.gridx = 1;
             gbc.gridy = 1;
@@ -174,18 +196,4 @@ public class FunctionControlPanel extends JPanel {
             InputLayout.setConstraints(delete, gbc);
             this.add(delete);
         }
-
-        public void createColorPicker() {
-            JComboBox<Color> colorPicker = new JComboBox<>(Colors);   //Combo Box to pick the Color of the Function
-            colorPicker.setRenderer(new ColorListRenderer());
-            colorPicker.addActionListener(new ColorBoxListener());
-
-            gbc.weightx = 1;
-            gbc.gridx = 2;
-            gbc.gridy = 0;  //Coordinates from where the Object is set
-            InputLayout.setConstraints(colorPicker, gbc);
-            this.add(colorPicker);
-        }
-
-
 }

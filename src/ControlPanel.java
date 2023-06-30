@@ -20,11 +20,11 @@ import java.awt.*;
 
             this.addTab("Polynomial Functions", null, polyFC, "Open settings menu for Polynomial Functions"); //Adds Tab to the TabbedPane
             this.setBackgroundAt(0, Color.white); //Sets TabColor
-            //this.setTabComponentAt(0, Tab1);  //Sets the labels as the Component for the Tab (ruled out for responsive reasons)
             this.addTab("Parametric Functions", null, paraFC, "Open loading area for Parametric Functions"); //Adds Tab to the TabbedPane
             this.setBackgroundAt(1, Color.white); //Sets TabColor
-            //this.setTabComponentAt(1, Tab2);  //Sets the labels as the Component for the Tab (ruled out for responsive reasons)
         }
+
+
     }
 
 

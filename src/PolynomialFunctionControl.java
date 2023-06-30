@@ -41,15 +41,43 @@ public class PolynomialFunctionControl extends JPanel {
         addNewFunctionControlPanel();
 
         this.add(functionInputPosition, BorderLayout.PAGE_START);
-        this.add(new HelpPanel(), BorderLayout.PAGE_END);
+        this.add(new PolynomialHelpPanel(), BorderLayout.PAGE_END);
 
     }
 
-    private class HelpPanel extends JPanel {
+    private class PolynomialHelpPanel extends JPanel {
 
         GridLayout HelpLabelLayout = new GridLayout(2, 2);
 
-        HelpPanel() {
+        public class HelpActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Display Helpwindow
+            }
+        }
+
+        public class ScreenshotActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Implement Screenshot function
+            }
+        }
+
+        public class ResetActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: Connect to Reset functionality
+            }
+        }
+
+        public class AddActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addNewFunctionControlPanel();
+            }
+        }
+
+        PolynomialHelpPanel() {
 
             this.setPreferredSize(new Dimension(PolynomialFunctionControl.this.getWidth(), 60));
             setLayout(HelpLabelLayout);
@@ -64,18 +92,21 @@ public class PolynomialFunctionControl extends JPanel {
         public void createHelpButton() {
             JButton help = new JButton("Help");
             help.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            help.addActionListener(new HelpActionListener());
             add(help);
         }
 
         public void createScreenshotButton() {
             JButton screenshot = new JButton("Screenshot");
             screenshot.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            screenshot.addActionListener(new ScreenshotActionListener());
             add(screenshot);
         }
 
         public void createResetButton() {
             JButton reset = new JButton("Reset");
             reset.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            reset.addActionListener(new ResetActionListener());
             add(reset);
         }
 
@@ -84,13 +115,6 @@ public class PolynomialFunctionControl extends JPanel {
             add.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
             add.addActionListener(new AddActionListener());
             add(add);
-        }
-
-        public class AddActionListener implements ActionListener {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addNewFunctionControlPanel();
-            }
         }
     }
 }
