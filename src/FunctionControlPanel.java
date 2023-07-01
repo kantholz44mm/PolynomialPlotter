@@ -10,7 +10,7 @@ public class FunctionControlPanel extends JPanel {
     private JComboBox<Color> colorPicker = new JComboBox<>(graphColors);   //Combo Box to pick the Color of the Function
     private final GridBagLayout InputLayout = new GridBagLayout();
     private final GridBagConstraints gbc = new GridBagConstraints();
-    private int count;
+    private int countOfInstances;
     private final List<FunctionControlPanel> functionControlPanelList;
     private final JPanel functionInputPosition;
     private final PolynomialFunctionControl polynomialFunctionControl;
@@ -20,7 +20,7 @@ public class FunctionControlPanel extends JPanel {
     public FunctionControlPanel(int count, List<FunctionControlPanel> functionControlPanelList, JPanel functionInputPosition, PolynomialFunctionControl polynomialFunctionControl) {
         this.functionControlPanelList = functionControlPanelList;
         this.functionInputPosition = functionInputPosition;
-        this.count = count;
+        this.countOfInstances = count;
         this.polynomialFunctionControl = polynomialFunctionControl;
 
 
@@ -72,7 +72,7 @@ public class FunctionControlPanel extends JPanel {
             polynomialFunctionControl.revalidate();
             polynomialFunctionControl.repaint();
             PolynomialFunctionControl.decrementCount();
-            count--;
+            countOfInstances--;
         }
     }
 

@@ -189,15 +189,16 @@ public class ParametricFunctionControlPanel extends JPanel {
 
         public boolean isNumeric(String range) {
 
-            if (range == null || range.equals(".")) return true;
+            if (range == null || range.equals(".") || range.equals("-")) return true;
 
             try {
-                double d = Double.parseDouble(range);
+                Double.parseDouble(range);
+                return true;
             } catch (NumberFormatException nfe) {
 
                 return false;
             }
-            return true;
+
         }
 
     }
