@@ -3,18 +3,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 
-public class Frame extends JFrame {
-    Frame() {
+public class GraphPlotterFrame extends JFrame {
+    public GraphPlotterFrame() {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(1400,900); //Sets the Size in case the Window is not maximized
         this.setExtendedState(MAXIMIZED_BOTH);
-        this.setResizable(true);        //Frame is resizable
+        this.setResizable(true);
         this.setTitle("Function Plotter");
         ImageIcon logo = new ImageIcon(".\\FunctionPlotterLogo.png"); //"converts" the .png into an ImageIcon
-        this.setIconImage(logo.getImage()); //Sets the ImageIcon as the Icon for the Frame
+        this.setIconImage(logo.getImage());
 
-        ControlPanel controlPanel = new ControlPanel(); //Initialisation of the ControlPanel
-        GraphPanel graphPanel = new GraphPanel();       //Initialisation of the GraphPanel
+        ControlPanel controlPanel = new ControlPanel();
+        GraphPanel graphPanel = new GraphPanel();
 
         GridBagLayout frameLayout = new GridBagLayout();
         setLayout(frameLayout);
@@ -24,19 +24,19 @@ public class Frame extends JFrame {
         gbc.insets = new Insets(0,0,0,0);   //Distance to Grid-"Lines" (that are not visible)
 
         gbc.gridx = 0;
-        gbc.gridy = 0;  //Coordinates from where the Object is set
-        gbc.weightx = 1;    //Weighting of the available space on the X-Axis
-        gbc.weighty = 1;    //Weighting of the available space on the Y-Axis
+        gbc.gridy = 0;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
         frameLayout.setConstraints(controlPanel, gbc);
         this.add(controlPanel);
         controlPanel.addChangeListener(new TabChangeListener());
 
 
         gbc.gridx = 1;
-        gbc.gridy = 0;  //Coordinates from where the Object is set
-        gbc.weightx = 10;      //Weighting of the X-Axis is 1:10 (ControlPanel:GraphPanel)
-        // TODO: Find optimal weighting between the two panels (consult Team)
-        gbc.weighty = 1;        //Weighting of the Y-Axis is 1:1
+        gbc.gridy = 0;
+        gbc.weightx = 10;
+        // TODO: Find optimal weighting between the two panels, current weighting is 1:10 (consult Team)
+        gbc.weighty = 1;
         frameLayout.setConstraints(graphPanel, gbc);
         this.add(graphPanel);
 

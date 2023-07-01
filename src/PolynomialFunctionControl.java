@@ -7,7 +7,7 @@ import java.util.List;
 public class PolynomialFunctionControl extends JPanel {
 
     public static int count = 0;
-    JPanel functionInputPosition = new JPanel(); //Panel that holds the FunctionInput (for Layout purposes)
+    private final JPanel functionInputPosition = new JPanel(); //Panel that holds the FunctionInput (for Layout purposes)
 
     private final List<FunctionControlPanel> functionControlPanelList = new ArrayList<>();
 
@@ -19,25 +19,22 @@ public class PolynomialFunctionControl extends JPanel {
             revalidate();
             repaint();
             count++;
-            System.out.println("Add");
         }
     }
-
     static void decrementCount() {
         count--;
     }
 
-    PolynomialFunctionControl() {
+    public PolynomialFunctionControl() {
 
         //Layout of the PolynomialFunctionControl Panel which holds the FunctionInputPosition (functionInput) and the HelpPanel
         BorderLayout PolyFunctionControlLayout = new BorderLayout(5, 0);
         this.setLayout(PolyFunctionControlLayout);
-        this.setBackground(Color.magenta);
 
-        //GridLayout in which the Instances of the FunctionInput are stacked
+        //GridLayout in which the Instances of the FunctionControlPanel are stacked
         GridLayout functionInputPositionLayout = new GridLayout(0, 1, 10, 4);
         functionInputPosition.setLayout(functionInputPositionLayout);
-        functionInputPosition.setBackground(Color.gray);
+        functionInputPosition.setBackground(Color.black); //Color is used to create lines between the instances of the FunctionControlPanel
         addNewFunctionControlPanel();
 
         this.add(functionInputPosition, BorderLayout.PAGE_START);
@@ -46,8 +43,6 @@ public class PolynomialFunctionControl extends JPanel {
     }
 
     private class PolynomialHelpPanel extends JPanel {
-
-        GridLayout HelpLabelLayout = new GridLayout(2, 2);
 
         public class HelpActionListener implements ActionListener {
             @Override
@@ -77,12 +72,11 @@ public class PolynomialFunctionControl extends JPanel {
             }
         }
 
-        PolynomialHelpPanel() {
+        private PolynomialHelpPanel() {
 
             this.setPreferredSize(new Dimension(PolynomialFunctionControl.this.getWidth(), 60));
-            setLayout(HelpLabelLayout);
-            this.setBackground(Color.cyan);
-
+            GridLayout helpLabelLayout = new GridLayout(2, 2);
+            setLayout(helpLabelLayout);
             createAddButton();
             createResetButton();
             createHelpButton();

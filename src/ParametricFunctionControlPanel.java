@@ -6,12 +6,12 @@ import java.awt.event.ActionListener;
 
 public class ParametricFunctionControlPanel extends JPanel {
 
-    GridBagLayout ParametricInputPosition = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-    JTextField functionFieldX = new JTextField();
-    JTextField functionFieldY = new JTextField();
-    JTextField rangeStart = new JTextField();
-    JTextField rangeEnd = new JTextField();
+    private final GridBagLayout ParametricInputPosition = new GridBagLayout();
+    private final GridBagConstraints gbc = new GridBagConstraints();
+    private final JTextField functionFieldX = new JTextField();
+    private final JTextField functionFieldY = new JTextField();
+    private final JTextField rangeStart = new JTextField();
+    private final JTextField rangeEnd = new JTextField();
 
     public ParametricFunctionControlPanel() {
 
@@ -94,7 +94,6 @@ public class ParametricFunctionControlPanel extends JPanel {
         add(Y);
 
         //Creates the TextField for the actual input
-        //functionFieldY.setBorder(BorderFactory.createEmptyBorder());
         functionFieldY.setHorizontalAlignment(JTextField.CENTER);
         functionFieldY.setFont(new Font("Arial", Font.PLAIN, 16));
         gbc.gridx = 1;
@@ -131,9 +130,6 @@ public class ParametricFunctionControlPanel extends JPanel {
         rangeParameter.setFont(new Font("Arial", Font.PLAIN, 20));
         gbc.gridx = 2;
         gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
-        gbc.ipady = 0;      //Could be deleted
-        gbc.weightx = 1;    //Could be deleted
         ParametricInputPosition.setConstraints(rangeParameter, gbc);
         add(rangeParameter);
 
@@ -143,12 +139,10 @@ public class ParametricFunctionControlPanel extends JPanel {
         rangeEnd.setFont(new Font("Arial", Font.PLAIN, 16));
         gbc.gridx = 3;
         gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
         gbc.ipady = 20;
-        gbc.weightx = 1;    //Could be deleted
         ParametricInputPosition.setConstraints(rangeEnd, gbc);
         add(rangeEnd);
-        AbstractDocument RangeEndDoc = (AbstractDocument) rangeEnd.getDocument(); //Sets a DocumentFilter to the TextField to only allow numeric input
+        AbstractDocument RangeEndDoc = (AbstractDocument) rangeEnd.getDocument(); //Sets a DocumentFilter to the TextField to only allow numeric input (exceptions: "." and null)
         RangeEndDoc.setDocumentFilter(new RangeNumericFilter());
 
     }
@@ -160,9 +154,7 @@ public class ParametricFunctionControlPanel extends JPanel {
         delete.addActionListener(new DeleteActionListener());
         gbc.gridx = 4;
         gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
         gbc.ipady = 0;
-        gbc.weightx = 1;    //Could be deleted
         ParametricInputPosition.setConstraints(delete, gbc);
         add(delete);
     }
@@ -175,9 +167,6 @@ public class ParametricFunctionControlPanel extends JPanel {
         calculate.addActionListener(new CalculateActionListener());
         gbc.gridx = 5;
         gbc.gridy = 3;
-        gbc.gridwidth = 1;  //Could be deleted
-        gbc.ipady = 0;      //Could be deleted
-        gbc.weightx = 1;    //Could be deleted
         ParametricInputPosition.setConstraints(calculate, gbc);
         add(calculate);
     }

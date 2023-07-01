@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 public class ParametricFunctionControl extends JPanel {
 
 
-    ParametricFunctionControl() {
+    public ParametricFunctionControl() {
 
         BorderLayout ParaFunctionControlLayout = new BorderLayout(0, 0);
         this.setLayout(ParaFunctionControlLayout);
@@ -17,8 +17,6 @@ public class ParametricFunctionControl extends JPanel {
     }
 
     private class ParametricHelpPanel extends JPanel {
-
-        GridLayout ParaHelpLabelLayout = new GridLayout(1, 2);
 
         public class HelpActionListener implements ActionListener {
             @Override
@@ -42,7 +40,8 @@ public class ParametricFunctionControl extends JPanel {
         }
 
         ParametricHelpPanel() {
-            setLayout(ParaHelpLabelLayout);
+            GridLayout paraHelpLabelLayout = new GridLayout(1, 2);
+            setLayout(paraHelpLabelLayout);
             setPreferredSize(new Dimension(ParametricFunctionControl.this.getWidth(), 30));
 
             createResetButton();
@@ -59,14 +58,14 @@ public class ParametricFunctionControl extends JPanel {
 
         public void createScreenshotButton() {
             JButton screenshot = new JButton("Screenshot");
-            screenshot.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            screenshot.setFocusable(false);
             screenshot.addActionListener(new ScreenshotActionListener());
             add(screenshot);
         }
 
         public void createResetButton() {
             JButton reset = new JButton("Reset");
-            reset.setFocusable(false);     //Removes the dotted line around the Button when it is clicked
+            reset.setFocusable(false);
             reset.addActionListener(new ResetActionListener());
             add(reset);
         }
