@@ -23,7 +23,7 @@ bin/
 /nbdist/
 /.nb-gradle/
 .idea/
-.iml
+*.iml
 
 ### VS Code ###
 .vscode/
