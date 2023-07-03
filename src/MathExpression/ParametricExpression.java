@@ -3,7 +3,7 @@ package MathExpression;
 import Core.ParametricFunction;
 import Core.Vector2D;
 
-public class ParametricExpression {
+public class ParametricExpression implements ParametricFunction {
 
     public final double lowerBound;
     public final double upperBound;
@@ -19,6 +19,7 @@ public class ParametricExpression {
         this.yExecutor = new ExpressionExecutor(yFunction);
     }
 
+    @Override
     public Vector2D evaluate(double t) {
         xExecutor.setParameter('t', t);
         yExecutor.setParameter('t', t);

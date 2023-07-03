@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,6 +125,7 @@ public class GraphPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
         int width = getWidth();
         int height = getHeight();
@@ -135,10 +137,7 @@ public class GraphPanel extends JPanel {
 
         drawAxes(g2d, width, height, zero);
         drawGrid(g2d, width, height, step);
-        drawPolynomialFunctions(g2d, width);
-        if(parametricExpression != null) {
-            drawParametricFunction(g2d, parametricExpression);
-        }
+        drawFunctions(g2d);
         drawLabelsAndScales(g2d, width, height, step);
         drawInformationWindows(g2d);
         drawIntersections(g2d);
@@ -178,47 +177,35 @@ public class GraphPanel extends JPanel {
         }
     }
 
-    private void drawParametricFunction(Graphics2D g2d, ParametricExpression expression) {
-        GeneralPath path = new GeneralPath();
-        double sampleLength = (expression.upperBound - expression.lowerBound) / expression.numSamples;
+    private void drawParametricFunction(Graphics2D g2d, ParametricFunction function, double lowerBound, double upperBound, int samples, Color color) {
+        Path2D.Double path = new Path2D.Double();
+        double sampleLength = (upperBound - lowerBound) / samples;
 
-        Vector2D startPosition = toScreenCoordinates(expression.evaluate(expression.lowerBound));
+        Vector2D startPosition = toScreenCoordinates(function.evaluate(lowerBound));
         path.moveTo(startPosition.x, startPosition.y);
 
-        for(int i = 1; i <= expression.numSamples; i++) {
-            double t = expression.lowerBound + i * sampleLength;
-            Vector2D position = toScreenCoordinates(expression.evaluate(t));
+        for(int i = 1; i <= samples; i++) {
+            double t = lowerBound + i * sampleLength;
+            Vector2D position = toScreenCoordinates(function.evaluate(t));
             path.lineTo(position.x, position.y);
         }
 
         g2d.setStroke(new BasicStroke(2.0f));
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(color);
         g2d.draw(path);
     }
 
-    private void drawPolynomialFunctions(Graphics2D g2d, int width) {
-        double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
-        double maxT = toWorldCoordinates(new Vector2D(width, 0)).x;
+    private void drawFunctions(Graphics2D g2d) {
+        double lowerScreenBound = toWorldCoordinates(new Vector2D(0, 0)).x;
+        double upperScreenBound = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
 
-        int numSteps = getWidth() * 10;
+        for(ParametricFunction parametricFunction : functions) {
+            PolynomialFunction polynomialFunction = (PolynomialFunction)parametricFunction;
+            drawParametricFunction(g2d, polynomialFunction, lowerScreenBound, upperScreenBound, getWidth(), polynomialFunction.graphColor);
+        }
 
-        double tStep = (maxT - minT) / numSteps;
-
-        for (ParametricFunction parametricFunction : functions) {
-            GeneralPath path = new GeneralPath();
-            double t = minT;
-            Vector2D initialPosition = toScreenCoordinates(parametricFunction.evaluate(t));
-            path.moveTo(initialPosition.x, initialPosition.y);
-
-            for (int i = 0; i < numSteps; i += 1) {
-                t += tStep;
-                Vector2D position = toScreenCoordinates(parametricFunction.evaluate(t));
-                path.lineTo(position.x, position.y);
-            }
-
-            g2d.setStroke(new BasicStroke(2.0f));
-            g2d.setColor(((PolynomialFunction) parametricFunction).graphColor);
-            g2d.draw(path);
+        if(parametricExpression != null) {
+            drawParametricFunction(g2d, parametricExpression, parametricExpression.lowerBound, parametricExpression.upperBound, parametricExpression.numSamples, Color.WHITE);
         }
     }
 
@@ -340,18 +327,18 @@ public class GraphPanel extends JPanel {
     }
 
     private Vector2D toScreenCoordinates(Vector2D position) {
-        int zeroX = getWidth() / 2 + (int) (offset.x * getScale());
-        int zeroY =  getHeight() / 2 - (int) (offset.y * getScale());
+        double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
+        double zeroY =  (double)getHeight() / 2.0 - (offset.y * getScale());
 
-        int screenX = zeroX + (int) (position.x * getScale());
-        int screenY = zeroY - (int) (position.y * getScale());
+        double screenX = zeroX + (position.x * getScale());
+        double screenY = zeroY - (position.y * getScale());
 
         return new Vector2D(screenX, screenY);
     }
 
     private Vector2D toWorldCoordinates(Vector2D position) {
-        int zeroX = getWidth() / 2 + (int) (offset.x * getScale());
-        int zeroY = getHeight() / 2 - (int) (offset.y * getScale());
+        double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
+        double zeroY = (double)getHeight() / 2.0 - (offset.y * getScale());
 
         double x = (position.x - zeroX) / getScale();
         double y = (zeroY - position.y) / getScale();
