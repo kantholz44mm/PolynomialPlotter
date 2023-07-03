@@ -51,6 +51,9 @@ public class GraphPanel extends JPanel {
         }
     }
 
+    // addFunction gets the function as string and its requested color.
+    // It returns the index of the listEntry so that the functionControl of the GUI
+    // can identify to which function in the functions list it belongs to.
     public int addFunction(String functionString, Color currentColor){
         if(functions.size() < 3){
             double minT = toWorldCoordinates(new Vector2D(0, 0)).x;

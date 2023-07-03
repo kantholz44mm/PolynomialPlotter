@@ -2,27 +2,15 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 class ComboBoxColorPicker extends JPanel {
     private final Color[] graphColors = {Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.GRAY};
     private final JComboBox<Color> colorPicker = new JComboBox<>(graphColors);
-    public Color currentColor;
 
     public ComboBoxColorPicker() {
         setLayout(new BorderLayout());
         colorPicker.setRenderer(new ColorListRenderer());
-        colorPicker.addActionListener(new ColorBoxListener());
-        currentColor = (Color) colorPicker.getSelectedItem();
         add(colorPicker, BorderLayout.CENTER);
-    }
-
-    private class ColorBoxListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            currentColor = (Color) colorPicker.getSelectedItem();
-        }
     }
 
     private class ColorListRenderer extends DefaultListCellRenderer {
@@ -35,6 +23,10 @@ class ComboBoxColorPicker extends JPanel {
             }
             return component;
         }
+    }
+
+    public Color getCurrentColor(){
+        return (Color) colorPicker.getSelectedItem();
     }
 
     private String getColorName(Color color) {

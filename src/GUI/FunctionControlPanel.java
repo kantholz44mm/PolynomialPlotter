@@ -15,7 +15,7 @@ public class FunctionControlPanel extends JPanel {
     private final JPanel functionInputPosition;
     private final PolynomialFunctionControl polynomialFunctionControl;
     private ComboBoxColorPicker colorPicker = null;
-    JTextField functionField = new JTextField(20);
+    private final JTextField functionField = new JTextField(20);
 
     public FunctionControlPanel(List<FunctionControlPanel> functionControlPanelList, JPanel functionInputPosition, PolynomialFunctionControl polynomialFunctionControl, GraphPanel graphPanel) {
         this.functionControlPanelList = functionControlPanelList;
@@ -39,9 +39,9 @@ public class FunctionControlPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if(instanceID == -1){
-                instanceID = graphPanel.addFunction(functionField.getText(), colorPicker.currentColor);
+                instanceID = graphPanel.addFunction(functionField.getText(), colorPicker.getCurrentColor());
             } else {
-                graphPanel.recalculateFunction(functionField.getText(), colorPicker.currentColor, instanceID);
+                graphPanel.recalculateFunction(functionField.getText(), colorPicker.getCurrentColor(), instanceID);
             }
         }
     }
