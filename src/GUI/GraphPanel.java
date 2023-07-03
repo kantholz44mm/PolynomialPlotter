@@ -136,7 +136,7 @@ public class GraphPanel extends JPanel {
         Vector2D zero = toScreenCoordinates(new Vector2D(0,0));
 
         drawAxes(g2d, width, height, zero);
-        drawGrid(g2d, width, height, step);
+        drawGrid(g2d, step);
         drawFunctions(g2d);
         drawLabelsAndScales(g2d, width, height, step);
         drawInformationWindows(g2d);
@@ -157,23 +157,28 @@ public class GraphPanel extends JPanel {
     private void drawAxes(Graphics2D g2d, int width, int height, Vector2D zero) {
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(0.5f));
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g2d.drawLine(0, (int)zero.y, width, (int)zero.y);
         g2d.drawLine((int)zero.x, 0, (int)zero.x, height);
     }
 
-    private void drawGrid(Graphics2D g2d, int width, int height, double step) {
+    private void drawGrid(Graphics2D g2d, double step) {
         g2d.setColor(new Color(200, 200, 200, 40));
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        for (double x = step * Math.floor((-offset.x - width / (2.0 * getScale())) / step); x <= -offset.x + width / (2.0 * getScale()); x += step) {
-            Vector2D screenPoint = toScreenCoordinates(new Vector2D(x,0));
-            int screenX = (int) screenPoint.x;
-            g2d.drawLine(screenX, 0, screenX, height);
+        Vector2D topLeft = toWorldCoordinates(new Vector2D(0, 0));
+        Vector2D bottomRight = toWorldCoordinates(new Vector2D(getWidth(), getHeight()));
+        topLeft = new Vector2D(Math.floor(topLeft.x / step) * step, Math.ceil(topLeft.y / step) * step);
+        bottomRight = new Vector2D(Math.ceil(bottomRight.x / step) * step, Math.floor(bottomRight.y / step) * step);
+
+        for (int x = 0; x < (bottomRight.x - topLeft.x) / step; x++) {
+            Vector2D screenPoint = toScreenCoordinates(new Vector2D(topLeft.x + x * step, 0));
+            g2d.fillRect((int)screenPoint.x, 0, 1, getHeight());
         }
 
-        for (double y = step * Math.floor((-offset.y - height / (2.0 * getScale())) / step); y <= -offset.y + height / (2.0 * getScale()); y += step) {
-            Vector2D screenPoint = toScreenCoordinates(new Vector2D(0,y));
-            int screenY = (int) screenPoint.y;
-            g2d.drawLine(0, screenY, width, screenY);
+        for (int y = 0; y < (topLeft.y - bottomRight.y) / step; y++) {
+            Vector2D screenPoint = toScreenCoordinates(new Vector2D(0, bottomRight.y + y * step));
+            g2d.fillRect(0, (int)screenPoint.y, getWidth(), 1);
         }
     }
 
@@ -192,6 +197,7 @@ public class GraphPanel extends JPanel {
 
         g2d.setStroke(new BasicStroke(2.0f));
         g2d.setColor(color);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.draw(path);
     }
 
@@ -213,6 +219,7 @@ public class GraphPanel extends JPanel {
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(0.5f));
         g2d.setFont(new Font("Arial", Font.PLAIN, 10));
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int tickSize = 3;
 
         for (double x = step * Math.floor((-offset.x - width / (2.0 * getScale())) / step); x <= -offset.x + width / (2.0 * getScale()); x += step) {
