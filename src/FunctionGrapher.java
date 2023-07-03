@@ -1,4 +1,5 @@
-import javax.swing.JFrame;
+import GUI.GraphPlotterFrame;
+
 import javax.swing.SwingUtilities;
 
 public class FunctionGrapher {

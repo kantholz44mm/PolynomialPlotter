@@ -1,3 +1,5 @@
+package GUI;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -51,7 +53,7 @@ public class FunctionControlPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             removeFunctionControlPanel(FunctionControlPanel.this);
-            //TODO: Connect to the function deleter to delete function on the GraphPanel
+            //TODO: Connect to the function deleter to delete function on the GUI.GraphPanel
         }
     }
 

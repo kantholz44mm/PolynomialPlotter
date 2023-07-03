@@ -1,3 +1,10 @@
+package GUI;
+
+
+import Core.ParametricFunction;
+import Core.PolynomialFunction;
+import Core.Vector2D;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -77,7 +84,7 @@ public class GraphPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             // will be reimplemented in the interface to the gui
-            //((PolynomialFunction)polynomial).derive();
+            //((Core.PolynomialFunction)polynomial).derive();
             repaint();
         }
     }

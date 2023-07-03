@@ -1,3 +1,5 @@
+package GUI;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -27,14 +29,14 @@ public class PolynomialFunctionControl extends JPanel {
 
     public PolynomialFunctionControl() {
 
-        //Layout of the PolynomialFunctionControl Panel which holds the FunctionInputPosition (functionInput) and the HelpPanel
+        //Layout of the GUI.PolynomialFunctionControl Panel which holds the FunctionInputPosition (functionInput) and the HelpPanel
         BorderLayout PolyFunctionControlLayout = new BorderLayout(5, 0);
         this.setLayout(PolyFunctionControlLayout);
 
-        //GridLayout in which the Instances of the FunctionControlPanel are stacked
+        //GridLayout in which the Instances of the GUI.FunctionControlPanel are stacked
         GridLayout functionInputPositionLayout = new GridLayout(0, 1, 10, 4);
         functionInputPosition.setLayout(functionInputPositionLayout);
-        functionInputPosition.setBackground(Color.black); //Color is used to create lines between the instances of the FunctionControlPanel
+        functionInputPosition.setBackground(Color.black); //Color is used to create lines between the instances of the GUI.FunctionControlPanel
         addNewFunctionControlPanel();
 
         this.add(functionInputPosition, BorderLayout.PAGE_START);
