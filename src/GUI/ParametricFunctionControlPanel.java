@@ -16,6 +16,7 @@ public class ParametricFunctionControlPanel extends JPanel {
     private final JTextField functionFieldY = new JTextField();
     private final JSpinner rangeStart = new JSpinner(new SpinnerNumberModel(0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0));
     private final JSpinner rangeEnd = new JSpinner(new SpinnerNumberModel(1.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0));
+    private final JSpinner stepSpinner = new JSpinner(new SpinnerNumberModel(300, 100, 10000, 1));
     private final GraphPanel graphPanel;
 
     public ParametricFunctionControlPanel(GraphPanel graphPanel) {
@@ -39,8 +40,6 @@ public class ParametricFunctionControlPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             functionFieldX.setText(null);
             functionFieldY.setText(null);
-            rangeStart.setValue(0.0);
-            rangeEnd.setValue(1.0);
             graphPanel.setParametricFunction(null);
         }
     }
@@ -48,7 +47,7 @@ public class ParametricFunctionControlPanel extends JPanel {
     public class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            ParametricExpression expression = new ParametricExpression(functionFieldX.getText(), functionFieldY.getText(), (double)rangeStart.getValue(), (double)rangeEnd.getValue(), 100);    
+            ParametricExpression expression = new ParametricExpression(functionFieldX.getText(), functionFieldY.getText(), (double)rangeStart.getValue(), (double)rangeEnd.getValue(), (int)stepSpinner.getValue());    
             graphPanel.setParametricFunction(expression);
         }
     }
@@ -110,6 +109,19 @@ public class ParametricFunctionControlPanel extends JPanel {
 
     private void createRangeSetters() {
 
+        //Creates the "Range:" label
+        JTextField rangeLabel = new JTextField("Range:");
+        rangeLabel.setEditable(false);
+        rangeLabel.setHorizontalAlignment(JTextField.RIGHT);
+        rangeLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1;
+        gbc.ipadx = 5;
+        gbc.ipady = 0;
+        ParametricInputPosition.setConstraints(rangeLabel, gbc);
+        add(rangeLabel);
+
         //Creates the first Box to declare the Range
         rangeStart.setPreferredSize(new Dimension(80, 20));
         rangeStart.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -141,6 +153,27 @@ public class ParametricFunctionControlPanel extends JPanel {
         ParametricInputPosition.setConstraints(rangeEnd, gbc);
         add(rangeEnd);
 
+        //Creates the "Steps:" label
+        JTextField stepsLabel = new JTextField("Steps:");
+        stepsLabel.setEditable(false);
+        stepsLabel.setHorizontalAlignment(JTextField.RIGHT);
+        stepsLabel.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1;
+        gbc.ipadx = 5;
+        gbc.ipady = 0;
+        ParametricInputPosition.setConstraints(stepsLabel, gbc);
+        add(stepsLabel);
+
+        //Creates the spinner to set step count
+        rangeEnd.setPreferredSize(new Dimension(80, 20));
+        rangeEnd.setFont(new Font("Arial", Font.PLAIN, 16));
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.ipady = 20;
+        ParametricInputPosition.setConstraints(stepSpinner, gbc);
+        add(stepSpinner);
     }
 
     private void createDeleteButton() {
@@ -148,9 +181,9 @@ public class ParametricFunctionControlPanel extends JPanel {
         delete.setPreferredSize(new Dimension(80, 20));
         delete.setFocusable(false);
         delete.addActionListener(new DeleteActionListener());
-        gbc.gridx = 4;
-        gbc.gridy = 3;
-        gbc.ipady = 0;
+        gbc.gridx = 2;
+        gbc.gridy = 4;
+        gbc.ipady = 20;
         ParametricInputPosition.setConstraints(delete, gbc);
         add(delete);
     }
@@ -161,8 +194,9 @@ public class ParametricFunctionControlPanel extends JPanel {
         calculate.setPreferredSize(new Dimension(80, 20));
         calculate.setFocusable(false);
         calculate.addActionListener(new CalculateActionListener());
-        gbc.gridx = 5;
-        gbc.gridy = 3;
+        gbc.gridx = 3;
+        gbc.gridy = 4;
+        gbc.ipady = 20;
         ParametricInputPosition.setConstraints(calculate, gbc);
         add(calculate);
     }
