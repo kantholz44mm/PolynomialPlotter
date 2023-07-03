@@ -1,3 +1,7 @@
+package Core;
+
+import java.awt.*;
+import java.util.List;
 import java.util.regex.*;
 import java.util.Arrays;
 import java.util.*;
@@ -7,10 +11,12 @@ public class PolynomialFunction implements ParametricFunction {
     private double[] coefficients;
     public List<Double> roots;
     public List<Double> extremePoints;
+    public Color graphColor;
 
-    public PolynomialFunction(String polynomialString) {
+    public PolynomialFunction(String polynomialString, Color color) {
         this.coefficients = new double[]{0};
         this.functionString = polynomialString;
+        this.graphColor = color;
         fromString(polynomialString);
     }
 

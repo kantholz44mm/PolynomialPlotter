@@ -1,17 +1,19 @@
+package GUI;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ParametricFunctionControl extends JPanel {
+    GraphPanel graphPanel;
 
-
-    public ParametricFunctionControl() {
+    public ParametricFunctionControl(GraphPanel graphPanel) {
 
         BorderLayout ParaFunctionControlLayout = new BorderLayout(0, 0);
         this.setLayout(ParaFunctionControlLayout);
-
-        this.add(new ParametricFunctionControlPanel(), BorderLayout.CENTER);
+        this.graphPanel = graphPanel;
+        this.add(new ParametricFunctionControlPanel(graphPanel), BorderLayout.CENTER);
         this.add(new ParametricHelpPanel(), BorderLayout.PAGE_END);
     }
 
@@ -34,7 +36,7 @@ public class ParametricFunctionControl extends JPanel {
         public class ResetActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Connect to Reset functionality
+                graphPanel.cameraReset();
             }
         }
 

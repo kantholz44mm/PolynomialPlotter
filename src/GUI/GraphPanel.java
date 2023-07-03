@@ -1,20 +1,27 @@
+package GUI;
+
+
+import Core.ParametricFunction;
+import Core.PolynomialFunction;
+import Core.Vector2D;
+import MathExpression.ParametricExpression;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
+    private ParametricExpression parametricExpression = null;
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = new Vector2D(0,0);
     private double zoom = 1.0;
-    private JTextField functionField;
-    private final Color backgroundColor = new Color(0.13f, 0.16f, 0.2f);
-    List<Color> colorList = Arrays.asList(Color.WHITE, Color.BLUE, Color.GREEN, Color.RED, Color.PINK);
+
     private class GraphMouseListener extends MouseAdapter {
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
@@ -45,41 +52,61 @@ public class GraphPanel extends JPanel {
         }
     }
 
-    private class CalculateActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(functions.size() < 3){
-                String functionString = functionField.getText();
-                double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
-                double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
-                PolynomialFunction function = new PolynomialFunction(functionString);
-                function.calcRoots(minT, maxT, 0.001);
-                function.calcExtremePoints(minT, maxT, 0.001);
-                functions.add(function);
-                repaint();
-            } else {
-                GraphPanel.infoBox("You reached the maximum amount of Graphs", "MAX_GRAPHS_REACHED");
-            }
-
+    // addFunction gets the function as string and its requested color.
+    // It returns the index of the listEntry so that the functionControl of the GUI
+    // can identify to which function in the functions list it belongs to.
+    public int addFunction(String functionString, Color currentColor){
+        if(functions.size() < 3){
+            double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
+            double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
+            PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
+            function.calcRoots(minT, maxT, 0.001);
+            function.calcExtremePoints(minT, maxT, 0.001);
+            functions.add(function);
+            repaint();
+            return functions.indexOf(function);
+        } else {
+            GraphPanel.infoBox("You reached the maximum amount of Graphs", "MAX_GRAPHS_REACHED");
+            return -1;
         }
     }
 
-    private class ResetActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            offset = new Vector2D(0,0);
-            zoom = 1.0;
+    public void setParametricFunction(ParametricExpression expression) {
+        this.parametricExpression = expression;
+        repaint();
+    }
+
+    public void recalculateFunction(String functionString, Color currentColor, int index){
+
+        double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
+        double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
+        PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
+        functions.set(index, function);
+
+        if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
+            polynomialFunction.calcRoots(minT, maxT, 0.001);
+            polynomialFunction.calcExtremePoints(minT, maxT, 0.001);
+        }
+
+        repaint();
+    }
+
+    public void removeFunction(int index){
+        functions.remove(index);
+        repaint();
+    }
+
+    public void deriveFunction(int index){
+        if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
+            polynomialFunction.derive();
             repaint();
         }
     }
 
-    private class DeriveActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // will be reimplemented in the interface to the gui
-            //((PolynomialFunction)polynomial).derive();
-            repaint();
-        }
+    public void cameraReset(){
+        offset = new Vector2D(0,0);
+        zoom = 1.0;
+        repaint();
     }
 
     public GraphPanel() {
@@ -87,35 +114,8 @@ public class GraphPanel extends JPanel {
         addMouseWheelListener(graphMouseListener);
         addMouseListener(graphMouseListener);
         addMouseMotionListener(graphMouseListener);
-
-        createResetButton();
-        createFunctionField();
-        createCalculateButton();
-        createDeriveButton();
     }
 
-    private void createResetButton() {
-        JButton resetButton = new JButton("Reset");
-        resetButton.addActionListener(new ResetActionListener());
-        add(resetButton);
-    }
-
-    private void createFunctionField() {
-        functionField = new JTextField(20);
-        add(functionField);
-    }
-
-    private void createCalculateButton() {
-        JButton calculateButton = new JButton("Calculate");
-        calculateButton.addActionListener(new CalculateActionListener());
-        add(calculateButton);
-    }
-
-    private void createDeriveButton() {
-        JButton deriveButton = new JButton("Derive");
-        deriveButton.addActionListener(new DeriveActionListener());
-        add(deriveButton);
-    }
     private double getScale() {
         return 50.0 * zoom;
     }
@@ -125,25 +125,22 @@ public class GraphPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
         int width = getWidth();
         int height = getHeight();
 
-        clearBackground(g2d, width, height);
+        g2d.setColor(new Color(0.13f, 0.16f, 0.2f));
+        g2d.fillRect(0, 0, width, height);
         double step = calculateGridStep();
         Vector2D zero = toScreenCoordinates(new Vector2D(0,0));
 
         drawAxes(g2d, width, height, zero);
         drawGrid(g2d, width, height, step);
-        drawFunctions(g2d, width);
+        drawFunctions(g2d);
         drawLabelsAndScales(g2d, width, height, step);
         drawInformationWindows(g2d);
         drawIntersections(g2d);
-    }
-
-    private void clearBackground(Graphics2D g2d, int width, int height) {
-        g2d.setColor(backgroundColor);
-        g2d.fillRect(0, 0, width, height);
     }
 
     private double calculateGridStep() {
@@ -180,32 +177,35 @@ public class GraphPanel extends JPanel {
         }
     }
 
-    private void drawFunctions(Graphics2D g2d, int width) {
-        GeneralPath path;
+    private void drawParametricFunction(Graphics2D g2d, ParametricFunction function, double lowerBound, double upperBound, int samples, Color color) {
+        Path2D.Double path = new Path2D.Double();
+        double sampleLength = (upperBound - lowerBound) / samples;
 
-        double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
-        double maxT = toWorldCoordinates(new Vector2D(width, 0)).x;
+        Vector2D startPosition = toScreenCoordinates(function.evaluate(lowerBound));
+        path.moveTo(startPosition.x, startPosition.y);
 
-        int numSteps = getWidth() * 10;
+        for(int i = 1; i <= samples; i++) {
+            double t = lowerBound + i * sampleLength;
+            Vector2D position = toScreenCoordinates(function.evaluate(t));
+            path.lineTo(position.x, position.y);
+        }
 
-        double tStep = (maxT - minT) / numSteps;
+        g2d.setStroke(new BasicStroke(2.0f));
+        g2d.setColor(color);
+        g2d.draw(path);
+    }
 
-        for (int x = 0; x < functions.size(); x++) {
-            path = new GeneralPath();
-            double t = minT;
+    private void drawFunctions(Graphics2D g2d) {
+        double lowerScreenBound = toWorldCoordinates(new Vector2D(0, 0)).x;
+        double upperScreenBound = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
 
-            Vector2D initialPosition = toScreenCoordinates(functions.get(x).evaluate(t));
-            path.moveTo(initialPosition.x, initialPosition.y);
+        for(ParametricFunction parametricFunction : functions) {
+            PolynomialFunction polynomialFunction = (PolynomialFunction)parametricFunction;
+            drawParametricFunction(g2d, polynomialFunction, lowerScreenBound, upperScreenBound, getWidth(), polynomialFunction.graphColor);
+        }
 
-            for (int i = 0; i < numSteps; i += 1) {
-                t += tStep;
-                Vector2D position = toScreenCoordinates(functions.get(x).evaluate(t));
-                path.lineTo(position.x, position.y);
-            }
-
-            g2d.setStroke(new BasicStroke(2.0f));
-            g2d.setColor(colorList.get(x % colorList.size()));
-            g2d.draw(path);
+        if(parametricExpression != null) {
+            drawParametricFunction(g2d, parametricExpression, parametricExpression.lowerBound, parametricExpression.upperBound, parametricExpression.numSamples, Color.WHITE);
         }
     }
 
@@ -327,18 +327,18 @@ public class GraphPanel extends JPanel {
     }
 
     private Vector2D toScreenCoordinates(Vector2D position) {
-        int zeroX = getWidth() / 2 + (int) (offset.x * getScale());
-        int zeroY =  getHeight() / 2 - (int) (offset.y * getScale());
+        double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
+        double zeroY =  (double)getHeight() / 2.0 - (offset.y * getScale());
 
-        int screenX = zeroX + (int) (position.x * getScale());
-        int screenY = zeroY - (int) (position.y * getScale());
+        double screenX = zeroX + (position.x * getScale());
+        double screenY = zeroY - (position.y * getScale());
 
         return new Vector2D(screenX, screenY);
     }
 
     private Vector2D toWorldCoordinates(Vector2D position) {
-        int zeroX = getWidth() / 2 + (int) (offset.x * getScale());
-        int zeroY = getHeight() / 2 - (int) (offset.y * getScale());
+        double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
+        double zeroY = (double)getHeight() / 2.0 - (offset.y * getScale());
 
         double x = (position.x - zeroX) / getScale();
         double y = (zeroY - position.y) / getScale();
