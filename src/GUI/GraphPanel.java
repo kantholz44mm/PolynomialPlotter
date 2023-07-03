@@ -4,6 +4,7 @@ package GUI;
 import Core.ParametricFunction;
 import Core.PolynomialFunction;
 import Core.Vector2D;
+import MathExpression.ParametricExpression;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
+    private ParametricExpression parametricExpression = null;
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = new Vector2D(0,0);
     private double zoom = 1.0;
@@ -63,6 +65,11 @@ public class GraphPanel extends JPanel {
             GraphPanel.infoBox("You reached the maximum amount of Graphs", "MAX_GRAPHS_REACHED");
             return -1;
         }
+    }
+
+    public void setParametricFunction(ParametricExpression expression) {
+        this.parametricExpression = expression;
+        repaint();
     }
 
     public void recalculateFunction(String functionString, Color currentColor, int index){
@@ -125,7 +132,10 @@ public class GraphPanel extends JPanel {
 
         drawAxes(g2d, width, height, zero);
         drawGrid(g2d, width, height, step);
-        drawFunctions(g2d, width);
+        drawPolynomialFunctions(g2d, width);
+        if(parametricExpression != null) {
+            drawParametricFunction(g2d, parametricExpression);
+        }
         drawLabelsAndScales(g2d, width, height, step);
         drawInformationWindows(g2d);
         drawIntersections(g2d);
@@ -165,7 +175,25 @@ public class GraphPanel extends JPanel {
         }
     }
 
-    private void drawFunctions(Graphics2D g2d, int width) {
+    private void drawParametricFunction(Graphics2D g2d, ParametricExpression expression) {
+        GeneralPath path = new GeneralPath();
+        double sampleLength = (expression.upperBound - expression.lowerBound) / expression.numSamples;
+
+        Vector2D startPosition = toScreenCoordinates(expression.evaluate(expression.lowerBound));
+        path.moveTo(startPosition.x, startPosition.y);
+
+        for(int i = 1; i <= expression.numSamples; i++) {
+            double t = expression.lowerBound + i * sampleLength;
+            Vector2D position = toScreenCoordinates(expression.evaluate(t));
+            path.lineTo(position.x, position.y);
+        }
+
+        g2d.setStroke(new BasicStroke(2.0f));
+        g2d.setColor(Color.WHITE);
+        g2d.draw(path);
+    }
+
+    private void drawPolynomialFunctions(Graphics2D g2d, int width) {
         GeneralPath path;
 
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;

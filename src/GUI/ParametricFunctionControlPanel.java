@@ -1,7 +1,9 @@
 package GUI;
 
 import javax.swing.*;
-import javax.swing.text.*;
+
+import MathExpression.ParametricExpression;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,12 +14,13 @@ public class ParametricFunctionControlPanel extends JPanel {
     private final GridBagConstraints gbc = new GridBagConstraints();
     private final JTextField functionFieldX = new JTextField();
     private final JTextField functionFieldY = new JTextField();
-    private final JTextField rangeStart = new JTextField();
-    private final JTextField rangeEnd = new JTextField();
+    private final JSpinner rangeStart = new JSpinner(new SpinnerNumberModel(0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0));
+    private final JSpinner rangeEnd = new JSpinner(new SpinnerNumberModel(1.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0));
+    private final GraphPanel graphPanel;
 
-    public ParametricFunctionControlPanel() {
+    public ParametricFunctionControlPanel(GraphPanel graphPanel) {
 
-
+        this.graphPanel = graphPanel;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(4, 2, 4, 2);
         setLayout(ParametricInputPosition);
@@ -36,20 +39,17 @@ public class ParametricFunctionControlPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             functionFieldX.setText(null);
             functionFieldY.setText(null);
-            rangeStart.setText(null);
-            rangeEnd.setText(null);
+            rangeStart.setValue(0.0);
+            rangeEnd.setValue(1.0);
+            graphPanel.setParametricFunction(null);
         }
     }
 
     public class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            functionFieldX.getText();
-            functionFieldY.getText();
-            rangeStart.getText();
-            rangeEnd.getText();
-            //Maybe set variables for the functions and the range
-            //TODO: Connect to parametric function calculator
+            ParametricExpression expression = new ParametricExpression(functionFieldX.getText(), functionFieldY.getText(), (double)rangeStart.getValue(), (double)rangeEnd.getValue(), 100);    
+            graphPanel.setParametricFunction(expression);
         }
     }
 
@@ -112,7 +112,6 @@ public class ParametricFunctionControlPanel extends JPanel {
 
         //Creates the first Box to declare the Range
         rangeStart.setPreferredSize(new Dimension(80, 20));
-        rangeStart.setHorizontalAlignment(JTextField.CENTER);
         rangeStart.setFont(new Font("Arial", Font.PLAIN, 16));
         gbc.gridx = 1;
         gbc.gridy = 3;
@@ -122,8 +121,6 @@ public class ParametricFunctionControlPanel extends JPanel {
         gbc.weightx = 1;
         ParametricInputPosition.setConstraints(rangeStart, gbc);
         add(rangeStart);
-        AbstractDocument RangeStartDoc = (AbstractDocument) rangeStart.getDocument(); //Sets a DocumentFilter to the TextField to only allow numeric input
-        RangeStartDoc.setDocumentFilter(new RangeNumericFilter());
 
         //Creates the "> = t < =" in the middle
         JTextField rangeParameter = new JTextField("< = t < =");
@@ -137,15 +134,12 @@ public class ParametricFunctionControlPanel extends JPanel {
 
         //Creates the second Box to declare the Range
         rangeEnd.setPreferredSize(new Dimension(80, 20));
-        rangeEnd.setHorizontalAlignment(JTextField.CENTER);
         rangeEnd.setFont(new Font("Arial", Font.PLAIN, 16));
         gbc.gridx = 3;
         gbc.gridy = 3;
         gbc.ipady = 20;
         ParametricInputPosition.setConstraints(rangeEnd, gbc);
         add(rangeEnd);
-        AbstractDocument RangeEndDoc = (AbstractDocument) rangeEnd.getDocument(); //Sets a DocumentFilter to the TextField to only allow numeric input (exceptions: "." and null)
-        RangeEndDoc.setDocumentFilter(new RangeNumericFilter());
 
     }
 
@@ -171,37 +165,5 @@ public class ParametricFunctionControlPanel extends JPanel {
         gbc.gridy = 3;
         ParametricInputPosition.setConstraints(calculate, gbc);
         add(calculate);
-    }
-
-    private static class RangeNumericFilter extends DocumentFilter {
-
-        @Override
-        public void insertString(FilterBypass fb, int offset, String range, AttributeSet attr) throws BadLocationException {
-
-            if (isNumeric(range))
-                super.insertString(fb, offset, range, attr);
-        }
-
-        @Override
-        public void replace(FilterBypass fb, int offset, int length, String range, AttributeSet attrs) throws BadLocationException {
-
-            if (isNumeric(range))
-                super.replace(fb, offset, length, range, attrs);
-        }
-
-        public boolean isNumeric(String range) {
-
-            if (range == null || range.equals(".") || range.equals("-")) return true;
-
-            try {
-                Double.parseDouble(range);
-                return true;
-            } catch (NumberFormatException nfe) {
-
-                return false;
-            }
-
-        }
-
     }
 }

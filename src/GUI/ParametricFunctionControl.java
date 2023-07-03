@@ -13,7 +13,7 @@ public class ParametricFunctionControl extends JPanel {
         BorderLayout ParaFunctionControlLayout = new BorderLayout(0, 0);
         this.setLayout(ParaFunctionControlLayout);
         this.graphPanel = graphPanel;
-        this.add(new ParametricFunctionControlPanel(), BorderLayout.CENTER);
+        this.add(new ParametricFunctionControlPanel(graphPanel), BorderLayout.CENTER);
         this.add(new ParametricHelpPanel(), BorderLayout.PAGE_END);
     }
 
