@@ -194,8 +194,6 @@ public class GraphPanel extends JPanel {
     }
 
     private void drawPolynomialFunctions(Graphics2D g2d, int width) {
-        GeneralPath path;
-
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(width, 0)).x;
 
@@ -204,7 +202,7 @@ public class GraphPanel extends JPanel {
         double tStep = (maxT - minT) / numSteps;
 
         for (ParametricFunction parametricFunction : functions) {
-            path = new GeneralPath();
+            GeneralPath path = new GeneralPath();
             double t = minT;
             Vector2D initialPosition = toScreenCoordinates(parametricFunction.evaluate(t));
             path.moveTo(initialPosition.x, initialPosition.y);
@@ -216,11 +214,7 @@ public class GraphPanel extends JPanel {
             }
 
             g2d.setStroke(new BasicStroke(2.0f));
-            if (parametricFunction instanceof PolynomialFunction) {
-                g2d.setColor(((PolynomialFunction) parametricFunction).graphColor);
-            } else {
-                g2d.setColor(Color.WHITE);
-            }
+            g2d.setColor(((PolynomialFunction) parametricFunction).graphColor);
             g2d.draw(path);
         }
     }
