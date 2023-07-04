@@ -6,11 +6,16 @@ import Core.PolynomialFunction;
 import Core.Vector2D;
 import MathExpression.ParametricExpression;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +29,15 @@ public class GraphPanel extends JPanel {
 
     private class GraphMouseListener extends MouseAdapter {
         @Override
-        public void mouseWheelMoved(MouseWheelEvent e) {
-            zoom -= e.getPreciseWheelRotation() * 0.1;
-            if (zoom < 0.1) zoom = 0.1;
+        public void mouseWheelMoved(MouseWheelEvent event) {
+            double scaleDelta = -event.getPreciseWheelRotation();
+            Vector2D preZoomPosition = toWorldCoordinates(new Vector2D(event.getX(), event.getY()));
+            zoom += zoom * scaleDelta * 0.1;
+            zoom = Math.max(0.1, Math.min(zoom, 500));
+            Vector2D postZoomPosition = toWorldCoordinates(new Vector2D(event.getX(), event.getY()));
+            Vector2D delta = preZoomPosition.delta(postZoomPosition);
+            offset.x += delta.x;
+            offset.y += delta.y;
             repaint();
         }
 
@@ -46,7 +57,7 @@ public class GraphPanel extends JPanel {
         }
 
         @Override
-        public void mouseMoved(MouseEvent e){
+        public void mouseMoved(MouseEvent e) {
             lastMousePosition = new Vector2D(e.getX(), e.getY());
             repaint();
         }
@@ -55,7 +66,7 @@ public class GraphPanel extends JPanel {
     // addFunction gets the function as string and its requested color.
     // It returns the index of the listEntry so that the functionControl of the GUI
     // can identify to which function in the functions list it belongs to.
-    public int addFunction(String functionString, Color currentColor){
+    public int addFunction(String functionString, Color currentColor) {
         if(functions.size() < 3){
             double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
             double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
@@ -76,7 +87,7 @@ public class GraphPanel extends JPanel {
         repaint();
     }
 
-    public void recalculateFunction(String functionString, Color currentColor, int index){
+    public void recalculateFunction(String functionString, Color currentColor, int index) {
 
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
@@ -91,22 +102,47 @@ public class GraphPanel extends JPanel {
         repaint();
     }
 
-    public void removeFunction(int index){
+    public void removeFunction(int index) {
         functions.remove(index);
         repaint();
     }
 
-    public void deriveFunction(int index){
+    public void deriveFunction(int index) {
         if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
             polynomialFunction.derive();
             repaint();
         }
     }
 
-    public void cameraReset(){
+    public void cameraReset() {
         offset = new Vector2D(0,0);
         zoom = 1.0;
         repaint();
+    }
+
+    public BufferedImage screenshot() {
+        BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        paint(image.createGraphics());
+        return image;
+    }
+
+    public void screenshotToFile() {
+        BufferedImage image = screenshot();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
+        
+        if(fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return; // user aborted file selection
+        }
+
+        String path = fileChooser.getSelectedFile().getAbsolutePath();
+        File imageFile = new File(path);
+        try {
+            ImageIO.write(image, "png", imageFile);
+            JOptionPane.showMessageDialog(this, "Saved to file: " + path, "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public GraphPanel() {
