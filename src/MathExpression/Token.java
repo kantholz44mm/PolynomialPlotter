@@ -20,6 +20,13 @@ public class Token {
                 default -> false;
             };
         }
+
+        public boolean isUnaryMinusPrefix() {
+            return switch(this) {
+                case Exponentiation, Division, Multiplication, Addition, Subtraction, Parenthesis_Left -> true;
+                default -> false;
+            };
+        }
     }
 
     public Type type;
