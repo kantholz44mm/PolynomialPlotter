@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class Tokenizer {
     private static final HashMap<Token.Type, Pattern> patterns = new HashMap<>() {{
-        put(Token.Type.Number,              Pattern.compile("^((?:(?<=[*\\-+/(])?-)?\\d+(?:\\.\\d+)?)"));
+        put(Token.Type.Number,              Pattern.compile("^[0-9]+(?:[.][0-9]+)?"));
         put(Token.Type.Parameter,           Pattern.compile("^([a-z](?=[^a-z])|[a-z]$)"));
         put(Token.Type.Function,            Pattern.compile("^(sin|cos|tan|sqrt|log|ln)"));
         put(Token.Type.Addition,            Pattern.compile("^\\+"));
@@ -40,6 +40,19 @@ public class Tokenizer {
             if(!validToken) {
                 System.out.println("invalid token");
                 return null;
+            }
+        }
+
+        // handle unary '-''
+        for(int i = 0; i < tokens.size() - 1; i++) {
+            Token currentToken = tokens.get(i);
+            Token nextToken = tokens.get(i + 1);
+            boolean hasUnaryPrefix = (i == 0 || tokens.get(i - 1).type.isUnaryMinusPrefix());
+
+            if(currentToken.type == Token.Type.Subtraction && nextToken.type == Token.Type.Number && hasUnaryPrefix) {
+                tokens.remove(i);
+                Token numericToken = tokens.get(i);
+                numericToken.literal = "-" + numericToken.literal;
             }
         }
 
