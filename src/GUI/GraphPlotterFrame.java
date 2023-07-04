@@ -21,6 +21,7 @@ public class GraphPlotterFrame extends JFrame {
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, controlPanel, graphPanel);
         splitPane.setOneTouchExpandable(true); // Adds buttons to collapse/expand the panels
         splitPane.setResizeWeight(0.05); // How the space is distributed between the two components. 0.5 means 50%-50%
+        splitPane.setDividerSize(20); // Sets the size of the divider. Default is 10.
         this.add(splitPane);
 
         this.setVisible(true);
