@@ -1,7 +1,6 @@
 package GUI;
 
 import javax.swing.*;
-import java.awt.*;
 
     public class ControlPanel extends JTabbedPane {
 
@@ -17,9 +16,7 @@ import java.awt.*;
             Tab2.setHorizontalAlignment(CENTER);
 
             this.addTab("Polynomial Functions", null, polyFC, "Open settings menu for Polynomial Functions");
-            this.setBackgroundAt(0, Color.white); //Sets TabColor
             this.addTab("Parametric Functions", null, paraFC, "Open parameter settings for Parametric Functions");
-            this.setBackgroundAt(1, Color.white);
         }
     }
 

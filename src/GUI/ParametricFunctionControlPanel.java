@@ -26,13 +26,11 @@ public class ParametricFunctionControlPanel extends JPanel {
         gbc.insets = new Insets(4, 2, 4, 2);
         setLayout(ParametricInputPosition);
 
-        createFunctionFieldX(); //Creates the TextArea for the "X:" and the TextField for the actual input
-        createFunctionFieldY(); //Creates the TextArea for the "Y:" and the TextField for the actual input
+        createFunctionFieldX();
+        createFunctionFieldY();
         createRangeSetters();
         createDeleteButton();
         createCalculateButton();
-
-        this.setBackground(Color.GRAY);
     }
 
     private class DeleteActionListener implements ActionListener {
