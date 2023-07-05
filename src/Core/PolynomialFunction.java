@@ -1,17 +1,20 @@
 package Core;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.regex.*;
-import java.util.Arrays;
 import java.util.*;
 
 public class PolynomialFunction implements ParametricFunction {
     private String functionString;
     private double[] coefficients;
-    public List<Double> roots;
-    public List<Double> extremePoints;
+    public Set<Double> roots;
+    public Set<Double> extremePoints;
     public Color graphColor;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public PolynomialFunction(String polynomialString, Color color) {
         this.coefficients = new double[]{0};
@@ -129,31 +132,98 @@ public class PolynomialFunction implements ParametricFunction {
         functionString =  sb.toString();
     }
 
-    public void calcRoots(double start, double end, double step) {
-        roots = new ArrayList<>();
-        Vector2D prevPoint = evaluate(start);
-        for (double x = start + step; x <= end; x += step) {
-            Vector2D point = evaluate(x);
-            if (prevPoint.y * point.y <= 0) {
-                roots.add(x - step / 2);
-            }
-            prevPoint = point;
+    public void calcRootsAndExtremes(double start, double end, double step) {
+        // If function is a constant skip the calculation
+        if(coefficients.length == 1) {
+            roots = new HashSet<>();
+            extremePoints = new HashSet<>();
+            roots.add(Double.NaN);
+            extremePoints.add(Double.NaN);
+            return;
+        }
+        Callable<Set<Double>> task1 = () -> calcRoots(start, end, step);
+        Callable<Set<Double>> task2 = () -> calcExtremes(start, end, step);
+
+        try {
+            List<Future<Set<Double>>> results = executorService.invokeAll(Arrays.asList(task1, task2));
+            roots = results.get(0).get();
+            extremePoints = results.get(1).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
     }
 
-    public void calcExtremePoints(double start, double end, double step) {
-        extremePoints = new ArrayList<>();
-        Vector2D startPoint = evaluate(start);
-        Vector2D nextPoint = evaluate(start + step);
-        double prevSlope = (nextPoint.y - startPoint.y) / step;
-        for (double x = start + 2 * step; x <= end; x += step) {
-            Vector2D point = evaluate(x);
-            double slope = (point.y - evaluate(x - step).y) / step;
-            if (prevSlope * slope <= 0) {
-                extremePoints.add(x - step);
+    private static final double EPSILON = 1E-15;
+
+    private Set<Double> calcRoots(double start, double end, double step) {
+        Set<Double> roots = new LinkedHashSet<>();
+        double prevY = evaluate(start).y;
+        for (double x = start + step; x <= end; x += step) {
+            double y = evaluate(x).y;
+            // If the value is incredibly close to zero, it is a root => Add
+            if (Math.abs(y) < EPSILON) {
+                double root = formatDouble(x);
+                if (shouldAddValue(root, roots)) {
+                    roots.add(root);
+                }
+            // First use Incremental Search to check for a sign change (if-statement)
+            // then calculate an approximately really close position using linear interpolation
+            } else if (prevY * y < 0) {
+                double root = (x - step) + (x - (x - step)) * Math.abs(prevY) / (Math.abs(prevY) + Math.abs(y));
+                root = formatDouble(root);
+                if (shouldAddValue(root, roots)) {
+                    roots.add(root);
+                }
+            }
+            prevY = y;
+        }
+        return roots;
+    }
+
+    private Set<Double> calcExtremes(double start, double end, double step) {
+        Set<Double> extremes = new LinkedHashSet<>();
+        double prevSlope = evaluateDerivative(start);
+        for (double x = start + step; x <= end; x += step) {
+            double slope = evaluateDerivative(x);
+            // If the value of the derivative is incredibly close to zero, it is an extreme point => Add
+            if (Math.abs(slope) < EPSILON) {
+                double extreme = formatDouble(x);
+                if (shouldAddValue(extreme, extremes)) {
+                    extremes.add(extreme);
+                }
+            // First use Incremental Search to check for a sign change (if-statement)
+            // then calculate an approximately really close position using linear interpolation
+            } else if (prevSlope * slope < 0) {
+                double extreme = (x - step) + (x - (x - step)) * Math.abs(prevSlope) / (Math.abs(prevSlope) + Math.abs(slope));
+                extreme = formatDouble(extreme);
+                if (shouldAddValue(extreme, extremes)) {
+                    extremes.add(extreme);
+                }
             }
             prevSlope = slope;
         }
+        return extremes;
+    }
+
+    private boolean shouldAddValue(double value, Set<Double> existingValues) {
+        for (Double existingValue : existingValues) {
+            if (Math.abs(existingValue - value) < EPSILON) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private double formatDouble(double value) {
+        return new BigDecimal(value).setScale(6, RoundingMode.HALF_UP).doubleValue();
+    }
+
+    private double evaluateDerivative(double x) {
+        double result = 0;
+        for (int i = this.coefficients.length - 1; i >= 1; i--) {
+            result = result * x + this.coefficients[i] * i;
+        }
+        return result;
     }
 
     public String getFunctionString() {
