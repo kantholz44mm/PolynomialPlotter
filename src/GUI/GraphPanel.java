@@ -383,21 +383,21 @@ public class GraphPanel extends JPanel {
 
         for (int i = 0; i < functions.size(); i++) {
             for (int j = i + 1; j < functions.size(); j++) {
-                double prevH = functions.get(i).evaluate(minT).y - functions.get(j).evaluate(minT).y;
+                double prevY = functions.get(i).evaluate(minT).y - functions.get(j).evaluate(minT).y;
 
                 for (double x = minT + step; x <= maxT; x += step) {
-                    double currH = functions.get(i).evaluate(x).y - functions.get(j).evaluate(x).y;
+                    double currY = functions.get(i).evaluate(x).y - functions.get(j).evaluate(x).y;
 
-                    if (Math.abs(currH) < EPSILON) {
+                    if (Math.abs(currY) < EPSILON) {
                         intersections.add(new Vector2D(x, functions.get(i).evaluate(x).y));
-                    } else if (prevH * currH < 0) {
+                    } else if (prevY * currY < 0) {
                         // Linearly interpolate to find a more accurate intersection point
-                        double intersectX = (x - step) + (x - (x - step)) * Math.abs(prevH) / (Math.abs(prevH) + Math.abs(currH));
+                        double intersectX = (x - step) + (x - (x - step)) * Math.abs(prevY) / (Math.abs(prevY) + Math.abs(currY));
                         double intersectY = functions.get(i).evaluate(intersectX).y;
                         intersections.add(new Vector2D(intersectX, intersectY));
                     }
 
-                    prevH = currH;
+                    prevY = currY;
                 }
             }
         }
