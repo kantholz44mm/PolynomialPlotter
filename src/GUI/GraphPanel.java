@@ -9,7 +9,6 @@ import MathExpression.ParametricExpression;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,16 @@ public class GraphPanel extends JPanel {
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = new Vector2D(0,0);
     private double zoom = 1.0;
+    private boolean drawIntersectionsEnabled = true;
+    private boolean drawInformationsEnabled = true;
+    public GraphPanel() {
+        GraphMouseListener graphMouseListener = new GraphMouseListener();
+        addMouseWheelListener(graphMouseListener);
+        addMouseListener(graphMouseListener);
+        addMouseMotionListener(graphMouseListener);
+
+        createOptionsButton();
+    }
 
     private class GraphMouseListener extends MouseAdapter {
         @Override
@@ -109,11 +118,40 @@ public class GraphPanel extends JPanel {
         repaint();
     }
 
-    public GraphPanel() {
-        GraphMouseListener graphMouseListener = new GraphMouseListener();
-        addMouseWheelListener(graphMouseListener);
-        addMouseListener(graphMouseListener);
-        addMouseMotionListener(graphMouseListener);
+    private void createOptionsButton() {
+        setLayout(new BorderLayout());
+        JButton optionsButton = new JButton(new ImageIcon(".\\gear.png"));
+        optionsButton.addActionListener(e -> openOptionsMenu());
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.setBorder(null);
+        buttonPanel.add(optionsButton);
+
+        add(buttonPanel, BorderLayout.NORTH);
+    }
+
+    private void openOptionsMenu() {
+        JCheckBox drawIntersectionsCheckBox = new JCheckBox("Draw intersections", drawIntersectionsEnabled);
+        JCheckBox drawInformationCheckBox = new JCheckBox("Draw information windows", drawInformationsEnabled);
+
+        drawIntersectionsCheckBox.addItemListener(e -> setDrawIntersectionsEnabled(e.getStateChange() == ItemEvent.SELECTED));
+        drawInformationCheckBox.addItemListener(e -> setDrawInformationsEnabled(e.getStateChange() == ItemEvent.SELECTED));
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(drawIntersectionsCheckBox);
+        panel.add(drawInformationCheckBox);
+
+        JOptionPane.showMessageDialog(this, panel, "Options", JOptionPane.PLAIN_MESSAGE);
+    }
+
+
+    public void setDrawIntersectionsEnabled(boolean enabled) {
+        this.drawIntersectionsEnabled = enabled;
+    }
+
+    public void setDrawInformationsEnabled(boolean enabled) {
+        this.drawInformationsEnabled = enabled;
     }
 
     private double getScale() {
@@ -139,8 +177,8 @@ public class GraphPanel extends JPanel {
         drawGrid(g2d, step);
         drawFunctions(g2d);
         drawLabelsAndScales(g2d, width, height, step);
-        drawInformationWindows(g2d);
-        drawIntersections(g2d);
+        if(drawInformationsEnabled) drawInformationWindows(g2d);
+        if(drawIntersectionsEnabled) drawIntersections(g2d);
     }
 
     private double calculateGridStep() {
@@ -157,7 +195,7 @@ public class GraphPanel extends JPanel {
     private void drawAxes(Graphics2D g2d, int width, int height, Vector2D zero) {
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(0.5f));
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.drawLine(0, (int)zero.y, width, (int)zero.y);
         g2d.drawLine((int)zero.x, 0, (int)zero.x, height);
     }
