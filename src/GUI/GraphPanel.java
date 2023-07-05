@@ -11,7 +11,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
@@ -20,13 +22,15 @@ public class GraphPanel extends JPanel {
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = new Vector2D(0,0);
     private double zoom = 1.0;
-    private boolean drawIntersectionsEnabled = true;
-    private boolean drawInformationsEnabled = true;
+    private final Map<String, Boolean>  options = new HashMap<>();
     public GraphPanel() {
         GraphMouseListener graphMouseListener = new GraphMouseListener();
         addMouseWheelListener(graphMouseListener);
         addMouseListener(graphMouseListener);
         addMouseMotionListener(graphMouseListener);
+
+        options.put("Intersections", true);
+        options.put("Information", true);
 
         createOptionsButton();
     }
@@ -131,27 +135,16 @@ public class GraphPanel extends JPanel {
     }
 
     private void openOptionsMenu() {
-        JCheckBox drawIntersectionsCheckBox = new JCheckBox("Draw intersections", drawIntersectionsEnabled);
-        JCheckBox drawInformationCheckBox = new JCheckBox("Draw information windows", drawInformationsEnabled);
-
-        drawIntersectionsCheckBox.addItemListener(e -> setDrawIntersectionsEnabled(e.getStateChange() == ItemEvent.SELECTED));
-        drawInformationCheckBox.addItemListener(e -> setDrawInformationsEnabled(e.getStateChange() == ItemEvent.SELECTED));
-
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(drawIntersectionsCheckBox);
-        panel.add(drawInformationCheckBox);
+
+        for (String option : options.keySet()) {
+            JCheckBox checkBox = new JCheckBox(option, options.get(option));
+            checkBox.addItemListener(e -> options.put(option, e.getStateChange() == ItemEvent.SELECTED));
+            panel.add(checkBox);
+        }
 
         JOptionPane.showMessageDialog(this, panel, "Options", JOptionPane.PLAIN_MESSAGE);
-    }
-
-
-    public void setDrawIntersectionsEnabled(boolean enabled) {
-        this.drawIntersectionsEnabled = enabled;
-    }
-
-    public void setDrawInformationsEnabled(boolean enabled) {
-        this.drawInformationsEnabled = enabled;
     }
 
     private double getScale() {
@@ -177,8 +170,8 @@ public class GraphPanel extends JPanel {
         drawGrid(g2d, step);
         drawFunctions(g2d);
         drawLabelsAndScales(g2d, width, height, step);
-        if(drawInformationsEnabled) drawInformationWindows(g2d);
-        if(drawIntersectionsEnabled) drawIntersections(g2d);
+        if(options.get("Information")) drawInformationWindows(g2d);
+        if(options.get("Intersections")) drawIntersections(g2d);
     }
 
     private double calculateGridStep() {
