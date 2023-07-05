@@ -31,6 +31,9 @@ public class GraphPanel extends JPanel {
 
         options.put("Intersections", true);
         options.put("Information", true);
+        options.put("Grid", true);
+        options.put("Axes", true);
+        options.put("Scales", true);
 
         createOptionsButton();
     }
@@ -157,10 +160,10 @@ public class GraphPanel extends JPanel {
         double step = calculateGridStep();
         Vector2D zero = toScreenCoordinates(new Vector2D(0,0));
 
-        drawAxes(g2d, width, height, zero);
-        drawGrid(g2d, step);
+        if(options.get("Axes"))drawAxes(g2d, width, height, zero);
+        if(options.get("Grid"))drawGrid(g2d, step);
         drawFunctions(g2d);
-        drawLabelsAndScales(g2d, width, height, step);
+        if(options.get("Scales")) drawLabelsAndScales(g2d, width, height, step);
         if(options.get("Information")) drawInformationWindows(g2d);
         if(options.get("Intersections")) drawIntersections(g2d);
     }
