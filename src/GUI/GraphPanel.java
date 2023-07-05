@@ -65,23 +65,43 @@ public class GraphPanel extends JPanel {
         }
     }
 
+    private void createOptionsButton() {
+        setLayout(new BorderLayout());
+        JButton optionsButton = new JButton(new ImageIcon(".\\gear.png"));
+        optionsButton.addActionListener(e -> openOptionsMenu());
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
+        buttonPanel.setBorder(null);
+        buttonPanel.add(optionsButton);
+
+        add(buttonPanel, BorderLayout.NORTH);
+    }
+
+    private void openOptionsMenu() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        for (String option : options.keySet()) {
+            JCheckBox checkBox = new JCheckBox(option, options.get(option));
+            checkBox.addItemListener(e -> options.put(option, e.getStateChange() == ItemEvent.SELECTED));
+            panel.add(checkBox);
+        }
+
+        JOptionPane.showMessageDialog(this, panel, "Options", JOptionPane.PLAIN_MESSAGE);
+    }
+
     // addFunction gets the function as string and its requested color.
     // It returns the index of the listEntry so that the functionControl of the GUI
     // can identify to which function in the functions list it belongs to.
     public int addFunction(String functionString, Color currentColor){
-        if(functions.size() < 3){
-            double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
-            double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
-            PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
-            function.calcRoots(minT, maxT, 0.001);
-            function.calcExtremePoints(minT, maxT, 0.001);
-            functions.add(function);
-            repaint();
-            return functions.indexOf(function);
-        } else {
-            GraphPanel.infoBox("You reached the maximum amount of Graphs", "MAX_GRAPHS_REACHED");
-            return -1;
-        }
+        double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
+        double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
+        PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
+        function.calcRoots(minT, maxT, 0.001);
+        function.calcExtremePoints(minT, maxT, 0.001);
+        functions.add(function);
+        repaint();
+        return functions.indexOf(function);
     }
 
     public void setParametricFunction(ParametricExpression expression) {
@@ -122,35 +142,6 @@ public class GraphPanel extends JPanel {
         repaint();
     }
 
-    private void createOptionsButton() {
-        setLayout(new BorderLayout());
-        JButton optionsButton = new JButton(new ImageIcon(".\\gear.png"));
-        optionsButton.addActionListener(e -> openOptionsMenu());
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setOpaque(false);
-        buttonPanel.setBorder(null);
-        buttonPanel.add(optionsButton);
-
-        add(buttonPanel, BorderLayout.NORTH);
-    }
-
-    private void openOptionsMenu() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        for (String option : options.keySet()) {
-            JCheckBox checkBox = new JCheckBox(option, options.get(option));
-            checkBox.addItemListener(e -> options.put(option, e.getStateChange() == ItemEvent.SELECTED));
-            panel.add(checkBox);
-        }
-
-        JOptionPane.showMessageDialog(this, panel, "Options", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    private double getScale() {
-        return 50.0 * zoom;
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -172,6 +163,10 @@ public class GraphPanel extends JPanel {
         drawLabelsAndScales(g2d, width, height, step);
         if(options.get("Information")) drawInformationWindows(g2d);
         if(options.get("Intersections")) drawIntersections(g2d);
+    }
+
+    private double getScale() {
+        return 50.0 * zoom;
     }
 
     private double calculateGridStep() {
@@ -383,10 +378,4 @@ public class GraphPanel extends JPanel {
 
         return new Vector2D(x, y);
     }
-
-    public static void infoBox(String infoMessage, String titleBar)
-    {
-        JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
-    }
-
 }
