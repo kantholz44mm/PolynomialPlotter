@@ -57,7 +57,7 @@ public class PolynomialFunctionControl extends JPanel {
         public class ScreenshotActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Implement Screenshot function
+                graphPanel.screenshotToFile();
             }
         }
 
