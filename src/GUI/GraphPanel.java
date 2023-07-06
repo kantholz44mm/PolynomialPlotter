@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
-    List<Vector2D> intersections = new ArrayList<>();
+    List<Vector2D> intersections;
     private ParametricExpression parametricExpression = null;
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = new Vector2D(0,0);
