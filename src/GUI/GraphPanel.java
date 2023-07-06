@@ -382,18 +382,20 @@ public class GraphPanel extends JPanel {
         double EPSILON = 1E-8;
 
         for (int i = 0; i < functions.size(); i++) {
+            ParametricFunction functionOuter = functions.get(i);
             for (int j = i + 1; j < functions.size(); j++) {
-                double prevY = functions.get(i).evaluate(minT).y - functions.get(j).evaluate(minT).y;
+                ParametricFunction functionInner = functions.get(j);
+                double prevY = functionOuter.evaluate(minT).y - functionInner.evaluate(minT).y;
 
                 for (double x = minT + step; x <= maxT; x += step) {
-                    double currY = functions.get(i).evaluate(x).y - functions.get(j).evaluate(x).y;
+                    double currY = functionOuter.evaluate(x).y - functionInner.evaluate(x).y;
 
                     if (Math.abs(currY) < EPSILON) {
-                        intersections.add(new Vector2D(x, functions.get(i).evaluate(x).y));
+                        intersections.add(new Vector2D(x, functionOuter.evaluate(x).y));
                     } else if (prevY * currY < 0) {
                         // Linearly interpolate to find a more accurate intersection point
-                        double intersectX = (x - step) + (x - (x - step)) * Math.abs(prevY) / (Math.abs(prevY) + Math.abs(currY));
-                        double intersectY = functions.get(i).evaluate(intersectX).y;
+                        double intersectX = (x - step) + step * Math.abs(prevY) / (Math.abs(prevY) + Math.abs(currY));
+                        double intersectY = functionOuter.evaluate(intersectX).y;
                         intersections.add(new Vector2D(intersectX, intersectY));
                     }
 

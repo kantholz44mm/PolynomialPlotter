@@ -14,7 +14,8 @@ public class PolynomialFunction implements ParametricFunction {
     public Set<Double> roots;
     public Set<Double> extremePoints;
     public Color graphColor;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private static final double EPSILON = 1E-18;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public PolynomialFunction(String polynomialString, Color color) {
         this.coefficients = new double[]{0};
@@ -153,27 +154,20 @@ public class PolynomialFunction implements ParametricFunction {
         }
     }
 
-    private static final double EPSILON = 1E-15;
-
     private Set<Double> calcRoots(double start, double end, double step) {
-        Set<Double> roots = new LinkedHashSet<>();
+        Set<Double> roots = new HashSet<>();
         double prevY = evaluate(start).y;
         for (double x = start + step; x <= end; x += step) {
             double y = evaluate(x).y;
             // If the value is incredibly close to zero, it is a root => Add
             if (Math.abs(y) < EPSILON) {
-                double root = formatDouble(x);
-                if (shouldAddValue(root, roots)) {
-                    roots.add(root);
-                }
+                roots.add(roundDouble(x));
             // First use Incremental Search to check for a sign change (if-statement)
             // then calculate an approximately really close position using linear interpolation
             } else if (prevY * y < 0) {
-                double root = (x - step) + (x - (x - step)) * Math.abs(prevY) / (Math.abs(prevY) + Math.abs(y));
-                root = formatDouble(root);
-                if (shouldAddValue(root, roots)) {
-                    roots.add(root);
-                }
+                double root = (x - step) + step * Math.abs(prevY) / (Math.abs(prevY) + Math.abs(y));
+                roots.add(roundDouble(root));
+
             }
             prevY = y;
         }
@@ -181,40 +175,25 @@ public class PolynomialFunction implements ParametricFunction {
     }
 
     private Set<Double> calcExtremes(double start, double end, double step) {
-        Set<Double> extremes = new LinkedHashSet<>();
+        Set<Double> extremes = new HashSet<>();
         double prevSlope = evaluateDerivative(start);
         for (double x = start + step; x <= end; x += step) {
             double slope = evaluateDerivative(x);
             // If the value of the derivative is incredibly close to zero, it is an extreme point => Add
             if (Math.abs(slope) < EPSILON) {
-                double extreme = formatDouble(x);
-                if (shouldAddValue(extreme, extremes)) {
-                    extremes.add(extreme);
-                }
+                extremes.add(roundDouble(x));
             // First use Incremental Search to check for a sign change (if-statement)
             // then calculate an approximately really close position using linear interpolation
             } else if (prevSlope * slope < 0) {
-                double extreme = (x - step) + (x - (x - step)) * Math.abs(prevSlope) / (Math.abs(prevSlope) + Math.abs(slope));
-                extreme = formatDouble(extreme);
-                if (shouldAddValue(extreme, extremes)) {
-                    extremes.add(extreme);
-                }
+                double extreme = (x - step) + step * Math.abs(prevSlope) / (Math.abs(prevSlope) + Math.abs(slope));
+                extremes.add(roundDouble(extreme));
             }
             prevSlope = slope;
         }
         return extremes;
     }
 
-    private boolean shouldAddValue(double value, Set<Double> existingValues) {
-        for (Double existingValue : existingValues) {
-            if (Math.abs(existingValue - value) < EPSILON) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private double formatDouble(double value) {
+    private double roundDouble(double value) {
         return new BigDecimal(value).setScale(6, RoundingMode.HALF_UP).doubleValue();
     }
 
