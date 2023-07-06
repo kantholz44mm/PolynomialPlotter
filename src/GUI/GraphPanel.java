@@ -112,8 +112,7 @@ public class GraphPanel extends JPanel {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
         PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
-        function.calcRoots(minT, maxT, 0.001);
-        function.calcExtremePoints(minT, maxT, 0.001);
+        function.calcRootsAndExtremes(minT, maxT, 0.001);
         functions.add(function);
         repaint();
         return functions.indexOf(function);
@@ -132,8 +131,7 @@ public class GraphPanel extends JPanel {
         functions.set(index, function);
 
         if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
-            polynomialFunction.calcRoots(minT, maxT, 0.001);
-            polynomialFunction.calcExtremePoints(minT, maxT, 0.001);
+            polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
         }
 
         repaint();
@@ -343,6 +341,7 @@ public class GraphPanel extends JPanel {
 
     private void drawIntersections(Graphics2D g2d){
         List<Vector2D> intersectionPoints = calculateIntersections();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(Color.YELLOW);
         Font font = new Font("Arial", Font.BOLD, 14);
         g2d.setFont(font);
@@ -350,7 +349,7 @@ public class GraphPanel extends JPanel {
 
         for (Vector2D intersection : intersectionPoints) {
             Vector2D screenPoint = toScreenCoordinates(intersection);
-            g2d.fillOval((int) screenPoint.x - 3, (int) screenPoint.y - 3, 6, 6);
+            g2d.fillOval((int) screenPoint.x - 6, (int) screenPoint.y - 6, 12, 12);
             if (screenPoint.distance(lastMousePosition) < 5) {
 
                 String intersectionPoint = String.format("(%.2f, %.2f)", intersection.x, intersection.y);
@@ -375,29 +374,39 @@ public class GraphPanel extends JPanel {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
         double step = 0.001;
+
         if (functions.size() < 2) {
             return intersections;
         }
 
-        for (double x = minT; x <= maxT; x += step) {
-            for (int i = 0; i < functions.size(); i++) {
-                for (int j = i + 1; j < functions.size(); j++) {
-                    double y1Prev = functions.get(i).evaluate(x - step).y;
-                    double y1Curr = functions.get(i).evaluate(x).y;
-                    double y2Prev = functions.get(j).evaluate(x - step).y;
-                    double y2Curr = functions.get(j).evaluate(x).y;
+        double EPSILON = 1E-8;
 
-                    // subtract values and calculate approximate roots => same as calcRoots
-                    if ((y1Prev - y2Prev) * (y1Curr - y2Curr) < 0) {
-                        double intersectX = x - step / 2;
-                        double intersectY = (y1Curr + y2Curr) / 2;
+        for (int i = 0; i < functions.size(); i++) {
+            ParametricFunction functionOuter = functions.get(i);
+            for (int j = i + 1; j < functions.size(); j++) {
+                ParametricFunction functionInner = functions.get(j);
+                double prevY = functionOuter.evaluate(minT).y - functionInner.evaluate(minT).y;
+
+                for (double x = minT + step; x <= maxT; x += step) {
+                    double currY = functionOuter.evaluate(x).y - functionInner.evaluate(x).y;
+
+                    if (Math.abs(currY) < EPSILON) {
+                        intersections.add(new Vector2D(x, functionOuter.evaluate(x).y));
+                    } else if (prevY * currY < 0) {
+                        // Linearly interpolate to find a more accurate intersection point
+                        double intersectX = (x - step) + step * Math.abs(prevY) / (Math.abs(prevY) + Math.abs(currY));
+                        double intersectY = functionOuter.evaluate(intersectX).y;
                         intersections.add(new Vector2D(intersectX, intersectY));
                     }
+
+                    prevY = currY;
                 }
             }
         }
+
         return intersections;
     }
+
 
     private Vector2D toScreenCoordinates(Vector2D position) {
         double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
