@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
+    List<Vector2D> intersections = new ArrayList<>();
     private ParametricExpression parametricExpression = null;
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = new Vector2D(0,0);
@@ -114,6 +115,7 @@ public class GraphPanel extends JPanel {
         PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
         function.calcRootsAndExtremes(minT, maxT, 0.001);
         functions.add(function);
+        calculateIntersections();
         repaint();
         return functions.indexOf(function);
     }
@@ -133,18 +135,20 @@ public class GraphPanel extends JPanel {
         if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
             polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
         }
-
+        calculateIntersections();
         repaint();
     }
 
     public void removeFunction(int index) {
         functions.remove(index);
+        calculateIntersections();
         repaint();
     }
 
     public void deriveFunction(int index) {
         if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
             polynomialFunction.derive();
+            calculateIntersections();
             repaint();
         }
     }
@@ -340,14 +344,13 @@ public class GraphPanel extends JPanel {
     }
 
     private void drawIntersections(Graphics2D g2d){
-        List<Vector2D> intersectionPoints = calculateIntersections();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(Color.YELLOW);
         Font font = new Font("Arial", Font.BOLD, 14);
         g2d.setFont(font);
         FontMetrics metrics = g2d.getFontMetrics(font);
 
-        for (Vector2D intersection : intersectionPoints) {
+        for (Vector2D intersection : intersections) {
             Vector2D screenPoint = toScreenCoordinates(intersection);
             g2d.fillOval((int) screenPoint.x - 6, (int) screenPoint.y - 6, 12, 12);
             if (screenPoint.distance(lastMousePosition) < 5) {
@@ -368,17 +371,15 @@ public class GraphPanel extends JPanel {
         }
     }
 
-    private List<Vector2D> calculateIntersections() {
-        List<Vector2D> intersections = new ArrayList<>();
-
+    private void calculateIntersections() {
+        intersections = new ArrayList<>();
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
         double step = 0.001;
 
         if (functions.size() < 2) {
-            return intersections;
+            return;
         }
-
         double EPSILON = 1E-8;
 
         for (int i = 0; i < functions.size(); i++) {
@@ -398,15 +399,11 @@ public class GraphPanel extends JPanel {
                         double intersectY = functionOuter.evaluate(intersectX).y;
                         intersections.add(new Vector2D(intersectX, intersectY));
                     }
-
                     prevY = currY;
                 }
             }
         }
-
-        return intersections;
     }
-
 
     private Vector2D toScreenCoordinates(Vector2D position) {
         double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
