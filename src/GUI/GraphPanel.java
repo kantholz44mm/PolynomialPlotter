@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
-    List<Vector2D> intersections;
+    List<Vector2D> intersections = new ArrayList<>();
     private ParametricExpression parametricExpression = null;
     private Vector2D offset = new Vector2D(0,0);
     private Vector2D lastMousePosition = new Vector2D(0,0);
@@ -83,7 +83,7 @@ public class GraphPanel extends JPanel {
 
     private void createOptionsButton() {
         setLayout(new BorderLayout());
-        JButton optionsButton = new JButton(new ImageIcon(".\\gear.png"));
+        JButton optionsButton = new JButton(new ImageIcon("./gear.png"));
         optionsButton.addActionListener(e -> openOptionsMenu());
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setOpaque(false);
