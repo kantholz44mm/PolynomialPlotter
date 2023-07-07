@@ -417,12 +417,87 @@ public class GraphPanel extends JPanel {
     }
 
     private Vector2D toWorldCoordinates(Vector2D position) {
-        double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
-        double zeroY = (double)getHeight() / 2.0 - (offset.y * getScale());
+        double zeroX = (double) getWidth() / 2.0 + (offset.x * getScale());
+        double zeroY = (double) getHeight() / 2.0 - (offset.y * getScale());
 
         double x = (position.x - zeroX) / getScale();
         double y = (zeroY - position.y) / getScale();
 
         return new Vector2D(x, y);
     }
+
+        public static class valuetable {
+            // frame
+            JFrame f;
+            // Table
+            JTable j;
+            double start;
+            double end;
+            double steps;
+            int cellamount;
+            private String[][] valuetablestrings;
+            private  Double[][] valuetablefigures;
+            String roundhelper;
+
+            // Constructor
+            public valuetable(double start, double end, double steps)
+            {
+                if (steps < 0){
+                    steps = -steps;
+                    }
+                if (steps == 0){
+                    steps = 1;
+                    }
+                this.start = start;
+                this.end = end;
+                this.steps = steps;
+                cellamount = (int)Math.ceil((end - start)/steps);
+                int size = ++cellamount ;
+                valuetablestrings = new String[size][size];
+                valuetablefigures = new Double[size][size];
+
+                double currentposition = start;
+
+                for (int i = 0; i <= cellamount; i++) {
+                    if (currentposition <= end) {
+
+                        valuetablestrings[i][0] = "X: " + currentposition;
+                        valuetablefigures[i][0] = currentposition;
+                        valuetablestrings[i][1] = "Y: "; //+ getsolution(currentposition);
+                        //valuetablefigures[i][0] = getsolution;
+                    }
+                    //roundhelper avoids the bad accuracy with doubles
+                    // it expands the number - rounds the decimal places - and shrinks it
+                    //without there will be numbers like 2.1999999998
+                    roundhelper = "" + currentposition;
+                    double rounder = Math.pow(10, (roundhelper.length() - 2))  ;
+                    currentposition = Math.round((currentposition + steps)*rounder)/rounder;
+                }
+                // Frame initialization
+                f = new JFrame();
+
+                // Frame Title
+                f.setTitle("ValueTable");
+
+                // Column Names
+                String[] columnNames = { "x - Values"," f(x) - Values"};
+
+                // Initializing the JTable
+                j = new JTable(valuetablestrings,columnNames);
+                j.setBounds(30, 40, 200, 300);
+
+                // adding it to JScrollPane
+                JScrollPane sp = new JScrollPane(j);
+                f.add(sp);
+                // Frame Size
+                f.setSize(500, 200);
+                // Frame Visible = true
+                f.setVisible(true);
+            }
+            //private double getsolution(double xvalue){
+
+            //}
+    }
+
 }
+
