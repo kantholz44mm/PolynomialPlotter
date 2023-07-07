@@ -337,7 +337,8 @@ public class GraphPanel extends JPanel {
                 g2d.drawString(functionString, boxX + 10, boxY + 20);
                 g2d.drawString(zeroPointsStr, boxX + 10, boxY + 40);
                 g2d.drawString(extremePointsStr, boxX + 10, boxY + 60);
-
+                g2d.setColor(polyFunction.graphColor);
+                g2d.fillOval(boxX + boxWidth - 30,  boxY + 10, 20, 20);
                 index++;
             }
         }
