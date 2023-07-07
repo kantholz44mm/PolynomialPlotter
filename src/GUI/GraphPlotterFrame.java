@@ -3,8 +3,12 @@ package GUI;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 
 public class GraphPlotterFrame extends JFrame {
+
+    private static GraphPlotterFrame instance;
+
     public GraphPlotterFrame() {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(1400,900);
@@ -34,4 +38,8 @@ public class GraphPlotterFrame extends JFrame {
         }
     }
 
+    public static GraphPlotterFrame getInstance() {
+
+        return instance;
+    }
 }

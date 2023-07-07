@@ -50,7 +50,7 @@ public class PolynomialFunctionControl extends JPanel {
         public class HelpActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Display HelpWindow
+                new HelpWindow();
             }
         }
 
