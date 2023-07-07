@@ -11,7 +11,7 @@ public class GraphPlotterFrame extends JFrame {
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setResizable(true);
         this.setTitle("Function Plotter");
-        ImageIcon logo = new ImageIcon(".\\FunctionPlotterLogo.png");
+        ImageIcon logo = new ImageIcon("./FunctionPlotterLogo.png");
         this.setIconImage(logo.getImage());
 
         GraphPanel graphPanel = new GraphPanel();
