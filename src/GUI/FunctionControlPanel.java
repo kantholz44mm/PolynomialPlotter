@@ -1,5 +1,7 @@
 package GUI;
 
+import Core.ParametricFunction;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,6 +35,7 @@ public class FunctionControlPanel extends JPanel {
         createCalculateButton();
         createDeriveButton();
         createDeleteButton();
+        createValueTableButton();
     }
 
     private class CalculateActionListener implements ActionListener {
@@ -62,6 +65,16 @@ public class FunctionControlPanel extends JPanel {
             removeFunctionControlPanel(FunctionControlPanel.this);
         }
     }
+    private class TableActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (instanceID != -1) {
+                ParametricFunction function = graphPanel.getFunction(instanceID);
+                Valuetable valuetable = new Valuetable(function);
+            }
+
+        }
+    }
 
     private void removeFunctionControlPanel(FunctionControlPanel functionControlPanel) {
         functionInputPosition.remove(functionControlPanel);
@@ -71,7 +84,7 @@ public class FunctionControlPanel extends JPanel {
     }
 
     public void createFunctionField() {
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.ipady = 10; //Height of the TextField
@@ -82,7 +95,7 @@ public class FunctionControlPanel extends JPanel {
     public void createColorPicker() {
         this.colorPicker = new ComboBoxColorPicker();
         gbc.weightx = 1;
-        gbc.gridx = 2;
+        gbc.gridx = 3;
         gbc.gridy = 0;
         InputLayout.setConstraints(this.colorPicker, gbc);
         this.add(this.colorPicker);
@@ -120,5 +133,15 @@ public class FunctionControlPanel extends JPanel {
         gbc.gridy = 1;
         InputLayout.setConstraints(delete, gbc);
         this.add(delete);
+    }
+    public void createValueTableButton() {
+        JButton table = new JButton("Table");
+        table.setFocusable(false);
+        table.addActionListener(new TableActionListener());
+
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        InputLayout.setConstraints(table, gbc);
+        this.add(table);
     }
 }

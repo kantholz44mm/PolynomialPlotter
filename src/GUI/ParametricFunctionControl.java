@@ -1,5 +1,7 @@
 package GUI;
 
+import MathExpression.ParametricExpression;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,6 +41,18 @@ public class ParametricFunctionControl extends JPanel {
                 graphPanel.cameraReset();
             }
         }
+        public class ValueTableActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ParametricExpression expression = graphPanel.getParametricExpression();
+                if (expression != null) {
+                    Valuetable valuetable = new Valuetable(expression);
+                }
+
+            }
+        }
+
+
 
         ParametricHelpPanel() {
             GridLayout paraHelpLabelLayout = new GridLayout(1, 2);
@@ -48,6 +62,8 @@ public class ParametricFunctionControl extends JPanel {
             createResetButton();
             createHelpButton();
             createScreenshotButton();
+            createTableButton();
+
         }
 
         public void createHelpButton() {
@@ -70,6 +86,13 @@ public class ParametricFunctionControl extends JPanel {
             reset.addActionListener(new ResetActionListener());
             add(reset);
         }
+        public void createTableButton() {
+            JButton table = new JButton("Table");
+            table.setFocusable(false);
+            table.addActionListener(new ValueTableActionListener());
+            add(table);
+        }
+
     }
 }
 

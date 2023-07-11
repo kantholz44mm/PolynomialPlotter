@@ -1,9 +1,7 @@
 package GUI;
 
 import javax.swing.*;
-
 import MathExpression.ParametricExpression;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +29,7 @@ public class ParametricFunctionControlPanel extends JPanel {
         createRangeSetters();
         createDeleteButton();
         createCalculateButton();
+
     }
 
     private class DeleteActionListener implements ActionListener {
@@ -45,7 +44,7 @@ public class ParametricFunctionControlPanel extends JPanel {
     public class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            ParametricExpression expression = new ParametricExpression(functionFieldX.getText(), functionFieldY.getText(), (double)rangeStart.getValue(), (double)rangeEnd.getValue(), (int)stepSpinner.getValue());    
+            ParametricExpression expression = new ParametricExpression(functionFieldX.getText(), functionFieldY.getText(), (double)rangeStart.getValue(), (double)rangeEnd.getValue(), (int)stepSpinner.getValue());
             graphPanel.setParametricFunction(expression);
         }
     }
