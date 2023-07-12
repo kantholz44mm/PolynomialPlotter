@@ -30,6 +30,9 @@ public class GraphPanel extends JPanel {
     private Vector2D lastMousePosition = new Vector2D(0, 0);
     private double zoom = 1.0;
     private final Map<String, Boolean> options = new HashMap<>();
+    private boolean valueTableIsActive0 = false;
+    private boolean valueTableIsActive1 = false;
+    private boolean valueTableIsActive2 = false;
 
     public GraphPanel() {
         GraphMouseListener graphMouseListener = new GraphMouseListener();
@@ -81,6 +84,33 @@ public class GraphPanel extends JPanel {
             repaint();
         }
     }
+    public  boolean getvalueTableIsActive(int index){
+        switch(index){
+            case 0:
+                return this.valueTableIsActive0;
+            case 1:
+                return this.valueTableIsActive1;
+            case 2:
+                return this.valueTableIsActive2;
+            default:
+               return false;
+        }
+    }
+    public void setgetvalueTableIsActiveFalse(int index){
+        switch(index){
+            case 0:
+                this.valueTableIsActive0 = false;
+            break;
+            case 1:
+                this.valueTableIsActive1 = false;
+            break;
+            case 2:
+                this.valueTableIsActive2 = false;
+            break;
+            default:
+        }
+    }
+
 
     private void createOptionsButton() {
         setLayout(new BorderLayout());
@@ -118,6 +148,19 @@ public class GraphPanel extends JPanel {
         functions.add(function);
         calculateIntersections();
         repaint();
+        switch(functions.indexOf(function)){
+            case 0:
+                this.valueTableIsActive0 = true;
+                break;
+            case 1:
+                this.valueTableIsActive1 = true;
+                break;
+            case 2:
+                this.valueTableIsActive2 = true;
+                break;
+            default:
+
+        }
         return functions.indexOf(function);
     }
 
@@ -144,6 +187,18 @@ public class GraphPanel extends JPanel {
             polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
         }
         calculateIntersections();
+        switch(functions.indexOf(function)) {
+            case 0:
+                this.valueTableIsActive0 = true;
+                break;
+            case 1:
+                this.valueTableIsActive1 = true;
+                break;
+            case 2:
+                this.valueTableIsActive2 = true;
+                break;
+            default:
+        }
         repaint();
     }
 
