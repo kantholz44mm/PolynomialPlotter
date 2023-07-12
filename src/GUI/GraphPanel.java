@@ -84,30 +84,21 @@ public class GraphPanel extends JPanel {
             repaint();
         }
     }
-    public  boolean getvalueTableIsActive(int index){
-        switch(index){
-            case 0:
-                return this.valueTableIsActive0;
-            case 1:
-                return this.valueTableIsActive1;
-            case 2:
-                return this.valueTableIsActive2;
-            default:
-               return false;
-        }
+    public  boolean getValueTableIsActive(int index){
+        return switch (index) {
+            case 0 -> this.valueTableIsActive0;
+            case 1 -> this.valueTableIsActive1;
+            case 2 -> this.valueTableIsActive2;
+            default -> false;
+        };
     }
-    public void setgetvalueTableIsActiveFalse(int index){
-        switch(index){
-            case 0:
-                this.valueTableIsActive0 = false;
-            break;
-            case 1:
-                this.valueTableIsActive1 = false;
-            break;
-            case 2:
-                this.valueTableIsActive2 = false;
-            break;
-            default:
+    public void setValueTableIsActiveFalse(int index){
+        switch (index) {
+            case 0 -> this.valueTableIsActive0 = false;
+            case 1 -> this.valueTableIsActive1 = false;
+            case 2 -> this.valueTableIsActive2 = false;
+            default -> {
+            }
         }
     }
 
@@ -148,18 +139,12 @@ public class GraphPanel extends JPanel {
         functions.add(function);
         calculateIntersections();
         repaint();
-        switch(functions.indexOf(function)){
-            case 0:
-                this.valueTableIsActive0 = true;
-                break;
-            case 1:
-                this.valueTableIsActive1 = true;
-                break;
-            case 2:
-                this.valueTableIsActive2 = true;
-                break;
-            default:
-
+        switch (functions.indexOf(function)) {
+            case 0 -> this.valueTableIsActive0 = true;
+            case 1 -> this.valueTableIsActive1 = true;
+            case 2 -> this.valueTableIsActive2 = true;
+            default -> {
+            }
         }
         return functions.indexOf(function);
     }
@@ -187,17 +172,12 @@ public class GraphPanel extends JPanel {
             polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
         }
         calculateIntersections();
-        switch(functions.indexOf(function)) {
-            case 0:
-                this.valueTableIsActive0 = true;
-                break;
-            case 1:
-                this.valueTableIsActive1 = true;
-                break;
-            case 2:
-                this.valueTableIsActive2 = true;
-                break;
-            default:
+        switch (functions.indexOf(function)) {
+            case 0 -> this.valueTableIsActive0 = true;
+            case 1 -> this.valueTableIsActive1 = true;
+            case 2 -> this.valueTableIsActive2 = true;
+            default -> {
+            }
         }
         repaint();
     }
