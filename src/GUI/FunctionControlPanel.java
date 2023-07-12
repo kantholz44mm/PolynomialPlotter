@@ -70,7 +70,7 @@ public class FunctionControlPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (instanceID != -1) {
                 ParametricFunction function = graphPanel.getFunction(instanceID);
-                Valuetable valuetable = new Valuetable(function);
+                new ValueTable(function);
             }
 
         }

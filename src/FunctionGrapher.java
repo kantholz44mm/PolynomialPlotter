@@ -1,4 +1,3 @@
-import GUI.GraphPanel;
 import GUI.GraphPlotterFrame;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
@@ -12,9 +11,5 @@ public class FunctionGrapher {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(GraphPlotterFrame::new);
-
-        //Valuetable valuetable = new Valuetable(20,40,0.01);
-
-        //Create a valuetable: here for test purposes
     }
 }

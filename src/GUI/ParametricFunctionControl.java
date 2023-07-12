@@ -24,7 +24,7 @@ public class ParametricFunctionControl extends JPanel {
         public class HelpActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Display Helpwindow
+                //TODO: Display HelpWindow
             }
         }
 
@@ -46,9 +46,8 @@ public class ParametricFunctionControl extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 ParametricExpression expression = graphPanel.getParametricExpression();
                 if (expression != null) {
-                    Valuetable valuetable = new Valuetable(expression);
+                    new ValueTable(expression);
                 }
-
             }
         }
 
