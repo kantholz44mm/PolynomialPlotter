@@ -9,13 +9,15 @@ import java.awt.event.ActionListener;
 
 public class ParametricFunctionControl extends JPanel {
     GraphPanel graphPanel;
+    ParametricFunctionControlPanel parametricFunctionControlPanel;
 
     public ParametricFunctionControl(GraphPanel graphPanel) {
 
         BorderLayout ParaFunctionControlLayout = new BorderLayout(0, 0);
         this.setLayout(ParaFunctionControlLayout);
         this.graphPanel = graphPanel;
-        this.add(new ParametricFunctionControlPanel(graphPanel), BorderLayout.CENTER);
+        parametricFunctionControlPanel = new ParametricFunctionControlPanel(graphPanel);
+        this.add(parametricFunctionControlPanel, BorderLayout.CENTER);
         this.add(new ParametricHelpPanel(), BorderLayout.PAGE_END);
     }
 
@@ -44,9 +46,12 @@ public class ParametricFunctionControl extends JPanel {
         public class ValueTableActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (parametricFunctionControlPanel.getvalueTableIsActive()){
                 ParametricExpression expression = graphPanel.getParametricExpression();
+                parametricFunctionControlPanel.setgetvalueTableIsActive(false);
                 if (expression != null) {
                     new ValueTable(expression);
+                    }
                 }
             }
         }

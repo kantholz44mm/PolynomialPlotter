@@ -27,7 +27,7 @@ public class ValueTable extends JDialog{
 
         int cellAmount = (int) (Math.ceil((end - start) / steps));
         int size = ++cellAmount;
-        valueTableStrings = new String[size][2];
+        valueTableStrings = new String[size][3];
         for (int i = 0; i <= cellAmount; i++) {
             double currentPosition = start + i * steps;
             if (currentPosition <= end) {

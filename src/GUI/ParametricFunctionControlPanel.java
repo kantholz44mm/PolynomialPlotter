@@ -16,6 +16,7 @@ public class ParametricFunctionControlPanel extends JPanel {
     private final JSpinner rangeEnd = new JSpinner(new SpinnerNumberModel(1.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0));
     private final JSpinner stepSpinner = new JSpinner(new SpinnerNumberModel(300, 100, 10000, 1));
     private final GraphPanel graphPanel;
+    protected boolean valueTableIsActive = false;
 
     public ParametricFunctionControlPanel(GraphPanel graphPanel) {
 
@@ -38,6 +39,7 @@ public class ParametricFunctionControlPanel extends JPanel {
             functionFieldX.setText(null);
             functionFieldY.setText(null);
             graphPanel.setParametricFunction(null);
+            valueTableIsActive = false;
         }
     }
 
@@ -46,7 +48,15 @@ public class ParametricFunctionControlPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             ParametricExpression expression = new ParametricExpression(functionFieldX.getText(), functionFieldY.getText(), (double)rangeStart.getValue(), (double)rangeEnd.getValue(), (int)stepSpinner.getValue());
             graphPanel.setParametricFunction(expression);
+            valueTableIsActive = true;
         }
+    }
+
+    public  boolean getvalueTableIsActive(){
+        return valueTableIsActive;
+    }
+    public void setgetvalueTableIsActive(boolean valueTableIsActive){
+    this.valueTableIsActive = valueTableIsActive;
     }
 
     public void createFunctionFieldX() {
