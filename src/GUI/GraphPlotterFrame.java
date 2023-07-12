@@ -1,10 +1,11 @@
 package GUI;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class GraphPlotterFrame extends JFrame {
+
+    private static GraphPlotterFrame instance;
+
     public GraphPlotterFrame() {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(1400,900);
@@ -16,7 +17,6 @@ public class GraphPlotterFrame extends JFrame {
 
         GraphPanel graphPanel = new GraphPanel();
         ControlPanel controlPanel = new ControlPanel(graphPanel);
-        controlPanel.addChangeListener(new TabChangeListener());
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, controlPanel, graphPanel);
         splitPane.setOneTouchExpandable(true); // Adds buttons to collapse/expand the panels
@@ -25,13 +25,10 @@ public class GraphPlotterFrame extends JFrame {
         this.add(splitPane);
 
         this.setVisible(true);
+        instance = this;
     }
 
-    private static class TabChangeListener implements ChangeListener {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            //TODO: Clear Graph Panel
-        }
+    public static GraphPlotterFrame getInstance() {
+        return instance;
     }
-
 }
