@@ -75,6 +75,7 @@ public class PolynomialFunctionControl extends JPanel {
             }
         }
 
+
         public void createHelpButton() {
             JButton help = new JButton("Help");
             help.setFocusable(false);
