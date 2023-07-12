@@ -24,7 +24,7 @@ public class ParametricFunctionControl extends JPanel {
         public class HelpActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Display Helpwindow
+                HelpWindow.getInstance().setVisible(true);
             }
         }
 
@@ -59,11 +59,10 @@ public class ParametricFunctionControl extends JPanel {
             setLayout(paraHelpLabelLayout);
             setPreferredSize(new Dimension(ParametricFunctionControl.this.getWidth(), 30));
 
-            createResetButton();
             createHelpButton();
             createScreenshotButton();
+            createResetButton();
             createTableButton();
-
         }
 
         public void createHelpButton() {
