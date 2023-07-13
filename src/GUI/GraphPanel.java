@@ -26,11 +26,15 @@ public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
     List<Vector2D> intersections = new ArrayList<>();
     private ParametricExpression parametricExpression = null;
-    private Vector2D offset = new Vector2D(0,0);
-    private Vector2D lastMousePosition = new Vector2D(0,0);
+    private Vector2D offset = new Vector2D(0, 0);
+    private Vector2D lastMousePosition = new Vector2D(0, 0);
     private double zoom = 1.0;
     private Vector2D currentGraphPoint = null;
     private final Map<String, Boolean>  options = new HashMap<>();
+    private boolean valueTableIsActive0 = false;
+    private boolean valueTableIsActive1 = false;
+    private boolean valueTableIsActive2 = false;
+
     public GraphPanel() {
         GraphMouseListener graphMouseListener = new GraphMouseListener();
         addMouseWheelListener(graphMouseListener);
@@ -83,6 +87,24 @@ public class GraphPanel extends JPanel {
             repaint();
         }
     }
+    public  boolean getValueTableIsActive(int index){
+        return switch (index) {
+            case 0 -> this.valueTableIsActive0;
+            case 1 -> this.valueTableIsActive1;
+            case 2 -> this.valueTableIsActive2;
+            default -> false;
+        };
+    }
+    public void setValueTableIsActiveFalse(int index){
+        switch (index) {
+            case 0 -> this.valueTableIsActive0 = false;
+            case 1 -> this.valueTableIsActive1 = false;
+            case 2 -> this.valueTableIsActive2 = false;
+            default -> {
+            }
+        }
+    }
+
 
     private Vector2D findNearestGraphPoint(Vector2D screenPosition) {
         Vector2D worldPosition = toWorldCoordinates(screenPosition);
@@ -143,6 +165,13 @@ public class GraphPanel extends JPanel {
         functions.add(function);
         calculateIntersections();
         repaint();
+        switch (functions.indexOf(function)) {
+            case 0 -> this.valueTableIsActive0 = true;
+            case 1 -> this.valueTableIsActive1 = true;
+            case 2 -> this.valueTableIsActive2 = true;
+            default -> {
+            }
+        }
         return functions.indexOf(function);
     }
 
@@ -150,6 +179,13 @@ public class GraphPanel extends JPanel {
         this.parametricExpression = expression;
         repaint();
     }
+    public ParametricFunction getFunction(int index) {
+        return functions.get(index);
+    }
+    public ParametricExpression getParametricExpression() {
+        return parametricExpression;
+    }
+
 
     public void recalculateFunction(String functionString, Color currentColor, int index) {
 
@@ -162,6 +198,13 @@ public class GraphPanel extends JPanel {
             polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
         }
         calculateIntersections();
+        switch (functions.indexOf(function)) {
+            case 0 -> this.valueTableIsActive0 = true;
+            case 1 -> this.valueTableIsActive1 = true;
+            case 2 -> this.valueTableIsActive2 = true;
+            default -> {
+            }
+        }
         repaint();
     }
 
@@ -180,7 +223,7 @@ public class GraphPanel extends JPanel {
     }
 
     public void cameraReset() {
-        offset = new Vector2D(0,0);
+        offset = new Vector2D(0, 0);
         zoom = 1.0;
         repaint();
     }
@@ -195,8 +238,8 @@ public class GraphPanel extends JPanel {
         BufferedImage image = screenshot();
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("PNG Images", "png"));
-        
-        if(fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
+
+        if (fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) {
             return; // user aborted file selection
         }
 
@@ -223,7 +266,7 @@ public class GraphPanel extends JPanel {
         g2d.setColor(new Color(0.13f, 0.16f, 0.2f));
         g2d.fillRect(0, 0, width, height);
         double step = calculateGridStep();
-        Vector2D zero = toScreenCoordinates(new Vector2D(0,0));
+        Vector2D zero = toScreenCoordinates(new Vector2D(0, 0));
 
         if(options.get("Draw x- and y-axis"))drawAxes(g2d, width, height, zero);
         if(options.get("Draw Background Grid"))drawGrid(g2d, step);
@@ -253,8 +296,8 @@ public class GraphPanel extends JPanel {
         g2d.setColor(Color.WHITE);
         g2d.setStroke(new BasicStroke(0.5f));
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.drawLine(0, (int)zero.y, width, (int)zero.y);
-        g2d.drawLine((int)zero.x, 0, (int)zero.x, height);
+        g2d.drawLine(0, (int) zero.y, width, (int) zero.y);
+        g2d.drawLine((int) zero.x, 0, (int) zero.x, height);
     }
 
     private void drawGrid(Graphics2D g2d, double step) {
@@ -268,12 +311,12 @@ public class GraphPanel extends JPanel {
 
         for (int x = 0; x < (bottomRight.x - topLeft.x) / step; x++) {
             Vector2D screenPoint = toScreenCoordinates(new Vector2D(topLeft.x + x * step, 0));
-            g2d.fillRect((int)screenPoint.x, 0, 1, getHeight());
+            g2d.fillRect((int) screenPoint.x, 0, 1, getHeight());
         }
 
         for (int y = 0; y < (topLeft.y - bottomRight.y) / step; y++) {
             Vector2D screenPoint = toScreenCoordinates(new Vector2D(0, bottomRight.y + y * step));
-            g2d.fillRect(0, (int)screenPoint.y, getWidth(), 1);
+            g2d.fillRect(0, (int) screenPoint.y, getWidth(), 1);
         }
     }
 
@@ -284,7 +327,7 @@ public class GraphPanel extends JPanel {
         Vector2D startPosition = toScreenCoordinates(function.evaluate(lowerBound));
         path.moveTo(startPosition.x, startPosition.y);
 
-        for(int i = 1; i <= samples; i++) {
+        for (int i = 1; i <= samples; i++) {
             double t = lowerBound + i * sampleLength;
             Vector2D position = toScreenCoordinates(function.evaluate(t));
             path.lineTo(position.x, position.y);
@@ -300,12 +343,12 @@ public class GraphPanel extends JPanel {
         double lowerScreenBound = toWorldCoordinates(new Vector2D(0, 0)).x;
         double upperScreenBound = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
 
-        for(ParametricFunction parametricFunction : functions) {
-            PolynomialFunction polynomialFunction = (PolynomialFunction)parametricFunction;
+        for (ParametricFunction parametricFunction : functions) {
+            PolynomialFunction polynomialFunction = (PolynomialFunction) parametricFunction;
             drawParametricFunction(g2d, polynomialFunction, lowerScreenBound, upperScreenBound, getWidth(), polynomialFunction.graphColor);
         }
 
-        if(parametricExpression != null) {
+        if (parametricExpression != null) {
             drawParametricFunction(g2d, parametricExpression, parametricExpression.lowerBound, parametricExpression.upperBound, parametricExpression.numSamples, Color.WHITE);
         }
     }
@@ -318,8 +361,8 @@ public class GraphPanel extends JPanel {
         int tickSize = 3;
 
         for (double x = step * Math.floor((-offset.x - width / (2.0 * getScale())) / step); x <= -offset.x + width / (2.0 * getScale()); x += step) {
-            Vector2D screenPoint = toScreenCoordinates(new Vector2D(x,0));
-            Vector2D zeroPoint = toScreenCoordinates(new Vector2D(0,0));
+            Vector2D screenPoint = toScreenCoordinates(new Vector2D(x, 0));
+            Vector2D zeroPoint = toScreenCoordinates(new Vector2D(0, 0));
             g2d.drawLine((int) screenPoint.x, (int) zeroPoint.y - tickSize, (int) screenPoint.x, (int) zeroPoint.y + tickSize);
             String label = String.format("%.2f", x);
             int textOffset = (x < 0) ? -2 - g2d.getFontMetrics().stringWidth(label) : 2;
@@ -327,8 +370,8 @@ public class GraphPanel extends JPanel {
         }
 
         for (double y = step * Math.floor((-offset.y - height / (2.0 * getScale())) / step); y <= -offset.y + height / (2.0 * getScale()); y += step) {
-            Vector2D screenPoint = toScreenCoordinates(new Vector2D(0,y));
-            Vector2D zeroPoint = toScreenCoordinates(new Vector2D(0,0));
+            Vector2D screenPoint = toScreenCoordinates(new Vector2D(0, y));
+            Vector2D zeroPoint = toScreenCoordinates(new Vector2D(0, 0));
             g2d.drawLine((int) zeroPoint.x - tickSize, (int) screenPoint.y, (int) zeroPoint.x + tickSize, (int) screenPoint.y);
             String label = String.format("%.2f", y);
             int textOffset = (y < 0) ? g2d.getFontMetrics().getAscent() + 2 : -2;
@@ -365,13 +408,13 @@ public class GraphPanel extends JPanel {
                 g2d.drawString(zeroPointsStr, boxX + 10, boxY + 40);
                 g2d.drawString(extremePointsStr, boxX + 10, boxY + 60);
                 g2d.setColor(polyFunction.graphColor);
-                g2d.fillOval(boxX + boxWidth - 30,  boxY + 10, 20, 20);
+                g2d.fillOval(boxX + boxWidth - 30, boxY + 10, 20, 20);
                 index++;
             }
         }
     }
 
-    private void drawIntersections(Graphics2D g2d){
+    private void drawIntersections(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(Color.YELLOW);
         Font font = new Font("Arial", Font.BOLD, 14);
@@ -451,8 +494,8 @@ public class GraphPanel extends JPanel {
     }
 
     private Vector2D toScreenCoordinates(Vector2D position) {
-        double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
-        double zeroY =  (double)getHeight() / 2.0 - (offset.y * getScale());
+        double zeroX = (double) getWidth() / 2.0 + (offset.x * getScale());
+        double zeroY = (double) getHeight() / 2.0 - (offset.y * getScale());
 
         double screenX = zeroX + (position.x * getScale());
         double screenY = zeroY - (position.y * getScale());
@@ -461,8 +504,8 @@ public class GraphPanel extends JPanel {
     }
 
     private Vector2D toWorldCoordinates(Vector2D position) {
-        double zeroX = (double)getWidth() / 2.0 + (offset.x * getScale());
-        double zeroY = (double)getHeight() / 2.0 - (offset.y * getScale());
+        double zeroX = (double) getWidth() / 2.0 + (offset.x * getScale());
+        double zeroY = (double) getHeight() / 2.0 - (offset.y * getScale());
 
         double x = (position.x - zeroX) / getScale();
         double y = (zeroY - position.y) / getScale();
@@ -470,3 +513,4 @@ public class GraphPanel extends JPanel {
         return new Vector2D(x, y);
     }
 }
+

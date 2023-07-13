@@ -50,7 +50,7 @@ public class PolynomialFunctionControl extends JPanel {
         public class HelpActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Display HelpWindow
+                HelpWindow.getInstance().setVisible(true);
             }
         }
 
@@ -74,6 +74,7 @@ public class PolynomialFunctionControl extends JPanel {
                 addNewFunctionControlPanel();
             }
         }
+
 
         public void createHelpButton() {
             JButton help = new JButton("Help");

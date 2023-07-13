@@ -1,5 +1,7 @@
 package GUI;
 
+import MathExpression.ParametricExpression;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,13 +9,15 @@ import java.awt.event.ActionListener;
 
 public class ParametricFunctionControl extends JPanel {
     GraphPanel graphPanel;
+    ParametricFunctionControlPanel parametricFunctionControlPanel;
 
     public ParametricFunctionControl(GraphPanel graphPanel) {
 
         BorderLayout ParaFunctionControlLayout = new BorderLayout(0, 0);
         this.setLayout(ParaFunctionControlLayout);
         this.graphPanel = graphPanel;
-        this.add(new ParametricFunctionControlPanel(graphPanel), BorderLayout.CENTER);
+        parametricFunctionControlPanel = new ParametricFunctionControlPanel(graphPanel);
+        this.add(parametricFunctionControlPanel, BorderLayout.CENTER);
         this.add(new ParametricHelpPanel(), BorderLayout.PAGE_END);
     }
 
@@ -22,7 +26,7 @@ public class ParametricFunctionControl extends JPanel {
         public class HelpActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: Display Helpwindow
+                HelpWindow.getInstance().setVisible(true);
             }
         }
 
@@ -39,6 +43,20 @@ public class ParametricFunctionControl extends JPanel {
                 graphPanel.cameraReset();
             }
         }
+        public class ValueTableActionListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (parametricFunctionControlPanel.getvalueTableIsActive()){
+                ParametricExpression expression = graphPanel.getParametricExpression();
+                parametricFunctionControlPanel.setgetvalueTableIsActive(false);
+                if (expression != null) {
+                    new ValueTable(expression);
+                    }
+                }
+            }
+        }
+
+
 
         ParametricHelpPanel() {
             GridLayout paraHelpLabelLayout = new GridLayout(1, 2);
@@ -48,6 +66,8 @@ public class ParametricFunctionControl extends JPanel {
             createResetButton();
             createHelpButton();
             createScreenshotButton();
+            createTableButton();
+
         }
 
         public void createHelpButton() {
@@ -70,6 +90,13 @@ public class ParametricFunctionControl extends JPanel {
             reset.addActionListener(new ResetActionListener());
             add(reset);
         }
+        public void createTableButton() {
+            JButton table = new JButton("Table");
+            table.setFocusable(false);
+            table.addActionListener(new ValueTableActionListener());
+            add(table);
+        }
+
     }
 }
 
