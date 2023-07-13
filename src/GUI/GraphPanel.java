@@ -92,8 +92,7 @@ public class GraphPanel extends JPanel {
         Vector2D nearestPoint = null;
         double nearestDistance = Double.POSITIVE_INFINITY;
 
-        for (UUID uuid : functions.keySet()) {
-            ParametricFunction function = functions.get(uuid);
+        for (ParametricFunction function : functions.values()) {
             for (double t = lowerScreenBound; t <= upperScreenBound; t += 0.001) {
                 Vector2D point = function.evaluate(t);
                 double distance = point.distance(worldPosition);
@@ -308,8 +307,7 @@ public class GraphPanel extends JPanel {
         double lowerScreenBound = toWorldCoordinates(new Vector2D(0, 0)).x;
         double upperScreenBound = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
 
-        for (UUID uuid : functions.keySet()) {
-            ParametricFunction parametricFunction = functions.get(uuid);
+        for (ParametricFunction parametricFunction : functions.values()) {
             PolynomialFunction polynomialFunction = (PolynomialFunction) parametricFunction;
             drawParametricFunction(g2d, polynomialFunction, lowerScreenBound, upperScreenBound, getWidth(), polynomialFunction.graphColor);
         }
@@ -352,8 +350,7 @@ public class GraphPanel extends JPanel {
         Font font = new Font("Arial", Font.PLAIN, 12);
 
         int index = 0;
-        for (UUID uuid : functions.keySet()) {
-            Object function = functions.get(uuid);
+        for (Object function : functions.values()) {
             if (function instanceof PolynomialFunction polyFunction) {
                 int boxX = 10 + index * (boxWidth + 10);
 
@@ -408,11 +405,9 @@ public class GraphPanel extends JPanel {
         }
         double EPSILON = 1E-8;
 
-        for (UUID uuidOuter : functions.keySet()) {
-            ParametricFunction functionOuter = functions.get(uuidOuter);
-            for (UUID uuidInner : functions.keySet()) {
-                if (uuidInner.equals(uuidOuter)) continue;
-                ParametricFunction functionInner = functions.get(uuidInner);
+        for (ParametricFunction functionOuter : functions.values()) {
+            for (ParametricFunction functionInner : functions.values()) {
+                if (functionInner.equals(functionOuter)) continue;
                 double prevY = functionOuter.evaluate(minT).y - functionInner.evaluate(minT).y;
 
                 for (double x = minT + step; x <= maxT; x += step) {
