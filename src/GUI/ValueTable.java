@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ValueTable extends JDialog{
+public class ValueTable extends JDialog {
     private ParametricFunction parametricFunction = null;
     private JTable table = null;
     private final JSpinner startSpinner = new JSpinner(new SpinnerNumberModel(0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1.0));
@@ -28,6 +28,7 @@ public class ValueTable extends JDialog{
         int cellAmount = (int) (Math.ceil((end - start) / steps));
         int size = ++cellAmount;
         valueTableStrings = new String[size][3];
+
         for (int i = 0; i <= cellAmount; i++) {
             double currentPosition = start + i * steps;
             if (currentPosition <= end) {
@@ -45,14 +46,14 @@ public class ValueTable extends JDialog{
         }
     }
 
-    public ValueTable(ParametricFunction parametricFunction)
-    {
-        final JButton   calculate = new JButton("Calculate");
+    public ValueTable(ParametricFunction parametricFunction) {
+        final JButton   calculateButton = new JButton("Calculate");
         final JTextField startLabel = new JTextField("Start:");
         final JTextField endLabel = new JTextField("End:");
         final JTextField stepLabel = new JTextField("Steps:");
         final GridLayout panelLayout = new GridLayout(2,0);
-        final JPanel valuesForCalculation = new JPanel();
+        final JPanel calculationParameters = new JPanel();
+
         new JDialog();
         this.parametricFunction = parametricFunction;
         this.setTitle("ValueTable");
@@ -60,10 +61,10 @@ public class ValueTable extends JDialog{
         this.setLayout(valueTableLayout);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         String[] columnNames = null;
+
         if (parametricFunction instanceof PolynomialFunction) {
             columnNames = new String[]{"x - Values", "f(x) - Values"};
         }
-
         else {
             columnNames = new String[]{"t - Values", "x - Values", "f(x) - Values"};
         }
@@ -73,21 +74,24 @@ public class ValueTable extends JDialog{
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.setBounds(30, 40, 200, 300);
         this.add(new JScrollPane(table));
-        valuesForCalculation.setLayout(panelLayout);
+
         startLabel.setEditable(false);
-        valuesForCalculation.add(startLabel);
         endLabel.setEditable(false);
-        valuesForCalculation.add(endLabel);
         stepLabel.setEditable(false);
-        valuesForCalculation.add(stepLabel);
-        valuesForCalculation.add(new JLabel());
-        valuesForCalculation.add(startSpinner);
-        valuesForCalculation.add(endSpinner);
-        valuesForCalculation.add(stepSpinner);
-        valuesForCalculation.add(calculate);
-        calculate.addActionListener(new ValueTable.CalculateActionListener());
-        valuesForCalculation.setPreferredSize(new Dimension(500,100));
-        this.add(valuesForCalculation);
+
+        calculationParameters.setLayout(panelLayout);
+        calculationParameters.add(startLabel);
+        calculationParameters.add(endLabel);
+        calculationParameters.add(stepLabel);
+        calculationParameters.add(new JLabel());
+        calculationParameters.add(startSpinner);
+        calculationParameters.add(endSpinner);
+        calculationParameters.add(stepSpinner);
+        calculationParameters.add(calculateButton);
+        calculationParameters.setPreferredSize(new Dimension(500,100));
+        calculateButton.addActionListener(new ValueTable.CalculateActionListener());
+
+        this.add(calculationParameters);
         this.setSize(500, 600);
         this.setVisible(true);
     }
@@ -95,7 +99,7 @@ public class ValueTable extends JDialog{
     private class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            calculateValueTable((double) startSpinner.getValue(),(double) endSpinner.getValue(),(double)stepSpinner.getValue());
+            calculateValueTable((double)startSpinner.getValue(), (double)endSpinner.getValue(), (double)stepSpinner.getValue());
         }
     }
 }

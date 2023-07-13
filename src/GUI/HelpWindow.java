@@ -7,10 +7,11 @@ import java.net.URL;
 
 public class HelpWindow extends JDialog {
 
-    private static HelpWindow instance;
-    public HelpWindow() {
+    // singleton instance
+    private static HelpWindow instance = null;
+
+    private HelpWindow() {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-        setUndecorated(true);
         setLayout(new BorderLayout());
         setResizable(false);
         JTextPane helpText = new JTextPane();
@@ -32,8 +33,8 @@ public class HelpWindow extends JDialog {
     }
 
     @Override
-    public void setVisible(boolean b) {
-        if (b) {
+    public void setVisible(boolean visible) {
+        if (visible) {
             GraphPlotterFrame frame = GraphPlotterFrame.getInstance();
             // Determine new size based on GraphPlotterFrame.
             Dimension frameSize = frame.getSize();
@@ -47,7 +48,7 @@ public class HelpWindow extends JDialog {
             int centerY = frameLocation.y + frameSize.height / 2 - newHeight / 2;
             this.setLocation(centerX, centerY);
         }
-        super.setVisible(b);
+        super.setVisible(visible);
     }
 
     public static HelpWindow getInstance() {

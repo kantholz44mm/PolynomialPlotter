@@ -35,7 +35,6 @@ public class PolynomialFunctionControl extends JPanel {
         }
     }
     private class PolynomialHelpPanel extends JPanel {
-
         private PolynomialHelpPanel() {
 
             this.setPreferredSize(new Dimension(PolynomialFunctionControl.this.getWidth(), 60));
@@ -74,7 +73,6 @@ public class PolynomialFunctionControl extends JPanel {
                 addNewFunctionControlPanel();
             }
         }
-
 
         public void createHelpButton() {
             JButton help = new JButton("Help");

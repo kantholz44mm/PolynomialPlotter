@@ -2,6 +2,7 @@ package Core;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 public class Vector2D {
     public double x = 0;
     public double y = 0;
@@ -31,9 +32,11 @@ public class Vector2D {
     public Vector2D scale(double factor) {
         return new Vector2D(x * factor, y * factor);
     }
-    public Vector2D round(int decimalsdigit) {
-        this.x = new BigDecimal(this.x).setScale(decimalsdigit,RoundingMode.HALF_UP).doubleValue();
-        this.y = new BigDecimal(this.y).setScale(decimalsdigit,RoundingMode.HALF_UP).doubleValue();
+
+    /// round both vector components to a set number of digits after the comma
+    public Vector2D round(int decimalDigits) {
+        this.x = new BigDecimal(this.x).setScale(decimalDigits,RoundingMode.HALF_UP).doubleValue();
+        this.y = new BigDecimal(this.y).setScale(decimalDigits,RoundingMode.HALF_UP).doubleValue();
         return this;
     }
 }
