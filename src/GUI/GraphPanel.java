@@ -95,6 +95,7 @@ public class GraphPanel extends JPanel {
         double nearestDistance = Double.POSITIVE_INFINITY;
 
         for (ParametricFunction function : functions) {
+            if(function == null) continue;
             for (double t = lowerScreenBound; t <= upperScreenBound; t += 0.001) {
                 Vector2D point = function.evaluate(t);
                 double distance = point.distance(worldPosition);
@@ -175,7 +176,7 @@ public class GraphPanel extends JPanel {
     }
 
     public void removeFunction(int index) {
-        functions.remove(index);
+        functions.set(index, null);
         calculateIntersections();
         repaint();
     }
@@ -310,6 +311,7 @@ public class GraphPanel extends JPanel {
         double upperScreenBound = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
 
         for (ParametricFunction parametricFunction : functions) {
+            if(parametricFunction == null) continue;
             PolynomialFunction polynomialFunction = (PolynomialFunction) parametricFunction;
             drawParametricFunction(g2d, polynomialFunction, lowerScreenBound, upperScreenBound, getWidth(), polynomialFunction.graphColor);
         }
@@ -353,6 +355,7 @@ public class GraphPanel extends JPanel {
 
         int index = 0;
         for (Object function : functions) {
+            if(function == null) continue;
             if (function instanceof PolynomialFunction polyFunction) {
                 int boxX = 10 + index * (boxWidth + 10);
 
@@ -408,8 +411,10 @@ public class GraphPanel extends JPanel {
         double EPSILON = 1E-8;
 
         for (int i = 0; i < functions.size(); i++) {
+            if(functions.get(i) == null) continue;
             ParametricFunction functionOuter = functions.get(i);
             for (int j = i + 1; j < functions.size(); j++) {
+                if(functions.get(j) == null) continue;
                 ParametricFunction functionInner = functions.get(j);
                 double prevY = functionOuter.evaluate(minT).y - functionInner.evaluate(minT).y;
 

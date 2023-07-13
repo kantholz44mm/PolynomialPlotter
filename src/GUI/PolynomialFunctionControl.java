@@ -26,7 +26,7 @@ public class PolynomialFunctionControl extends JPanel {
     }
 
     private void addNewFunctionControlPanel() {
-        if(functionControlPanelList.size() < 3) {
+        if(functionControlPanelList.size() < 5) {
             FunctionControlPanel functionControlPanel = new FunctionControlPanel(functionControlPanelList, functionInputPanel, this, this.graphPanel);
             functionInputPanel.add(functionControlPanel);
             functionControlPanelList.add(functionControlPanel);
