@@ -1,5 +1,7 @@
 package Core;
 
+import MathExpression.ExpressionExecutor;
+
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,34 +26,50 @@ public class PolynomialFunction implements ParametricFunction {
         fromString(polynomialString);
     }
 
-    public void fromString(String polynomial) {
+    public void fromString(String polynomial) throws IllegalArgumentException {
         if (polynomial == null || polynomial.isEmpty()) {
             throw new IllegalArgumentException("Polynomial string cannot be null or empty");
         }
-        Pattern TERM_PATTERN = Pattern.compile("([-+]?\\s*\\d*\\.?\\d*(?:/\\d+)*)?x(\\^(-?\\d+))?|([-+]?\\s*\\d+(/\\d+)?)");
-        Matcher matcher = TERM_PATTERN.matcher(polynomial);
 
-        while (matcher.find()) {
-            String coefStr = removeWhitespace(matcher.group(1));
-            String expStr = removeWhitespace(matcher.group(3));
-            String constantStr = removeWhitespace(matcher.group(4));
+        // Split the polynomial into terms by '+' or '-'
+        // (but not within parentheses) and include the delimiter in the term
+        String[] terms = polynomial.split("((?<=\\b)|(?<=\\B))(?=[+-])(?![^(]*\\))");
 
-            double coef;
-            int exp;
+        for (String term : terms) {
+            Matcher matcher = Pattern.compile("([-+]?\\s*([^x^]+)?\\s*x?(\\^(-?\\d+))?)?").matcher(term);
 
-            if (!isNullOrEmpty(constantStr)) {
-                coef = parseFraction(constantStr);
-                exp = 0;
-            } else {
-                coef = 1.0;
-                if (!isNullOrEmpty(coefStr)) {
-                    coef = parseFractionOrSign(coefStr);
+            if (matcher.matches()) {
+                String coefStr = removeWhitespace(matcher.group(2));
+                String expStr = removeWhitespace(matcher.group(4));
+                ExpressionExecutor executor = new ExpressionExecutor("");
+
+                double coef;
+                int exp;
+
+                if (isNullOrEmpty(coefStr)) {
+                    coef = 1.0;
+                } else {
+                    executor.setExpression(coefStr);
+                    coef = executor.evaluate();
                 }
-                exp = isNullOrEmpty(expStr) ? 1 : Integer.parseInt(expStr);
-            }
 
-            extendCoefficientsArrayIfNeeded(exp);
-            this.coefficients[exp] = coef;
+                if (term.startsWith("-")) {
+                    coef *= -1.0;
+                }
+
+                if (matcher.group(3) != null) {
+                    // 'x' is present, so this term has an exponent
+                    exp = isNullOrEmpty(expStr) ? 1 : Integer.parseInt(expStr);
+                } else {
+                    // 'x' is not present, so this term is a constant
+                    exp = 0;
+                }
+
+                extendCoefficientsArrayIfNeeded(exp);
+                this.coefficients[exp] += coef;
+            } else {
+                throw new IllegalArgumentException("Invalid term: " + term);
+            }
         }
     }
 
@@ -63,36 +81,10 @@ public class PolynomialFunction implements ParametricFunction {
         return str == null || str.isEmpty();
     }
 
-    private double parseFractionOrSign(String str) {
-        if (str.equals("+") || str.equals("-")) {
-            return str.equals("+") ? 1.0 : -1.0;
-        }
-        return parseFraction(str);
-    }
-
     private void extendCoefficientsArrayIfNeeded(int exp) {
         if (exp >= this.coefficients.length) {
             this.coefficients = Arrays.copyOf(this.coefficients, exp + 1);
         }
-    }
-
-    private double parseFraction(String input) {
-        if (input.contains("/")) {
-            String[] fractionParts = input.split("/");
-            return Double.parseDouble(fractionParts[0]) / Double.parseDouble(fractionParts[1]);
-        } else {
-            return Double.parseDouble(input);
-        }
-    }
-
-    public int degree() {
-        for (int i = coefficients.length - 1; i >= 0; i--) {
-            double coefficient = coefficients[i];
-            if (coefficient != 0.0) {
-                return i;
-            }
-        }
-        return 0;
     }
 
     @Override
