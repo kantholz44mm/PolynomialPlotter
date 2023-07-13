@@ -7,10 +7,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.UUID;
 
 public class FunctionControlPanel extends JPanel {
     private final GraphPanel graphPanel;
-    private int instanceID;
+    private UUID instanceID;
     private final GridBagLayout InputLayout = new GridBagLayout();
     private final GridBagConstraints gbc = new GridBagConstraints();
     private final List<FunctionControlPanel> functionControlPanelList;
@@ -23,7 +24,7 @@ public class FunctionControlPanel extends JPanel {
         this.functionControlPanelList = functionControlPanelList;
         this.functionInputPosition = functionInputPosition;
         this.polynomialFunctionControl = polynomialFunctionControl;
-        this.instanceID = -1;
+        this.instanceID = null;
         this.graphPanel = graphPanel;
 
         gbc.fill = GridBagConstraints.BOTH;
@@ -41,7 +42,7 @@ public class FunctionControlPanel extends JPanel {
     private class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(instanceID == -1) {
+            if(instanceID == null) {
                 instanceID = graphPanel.addFunction(functionField.getText(), colorPicker.getCurrentColor());
             } else {
                 graphPanel.recalculateFunction(functionField.getText(), colorPicker.getCurrentColor(), instanceID);
@@ -59,7 +60,7 @@ public class FunctionControlPanel extends JPanel {
     private class DeleteActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (instanceID != -1) {
+            if (instanceID != null) {
                 graphPanel.removeFunction(instanceID);
             }
             removeFunctionControlPanel(FunctionControlPanel.this);
@@ -68,12 +69,9 @@ public class FunctionControlPanel extends JPanel {
     private class TableActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(graphPanel.getValueTableIsActive(instanceID)) {
-                graphPanel.setValueTableIsActiveFalse(instanceID);
-                if (instanceID != -1) {
-                    ParametricFunction function = graphPanel.getFunction(instanceID);
-                    new ValueTable(function);
-                }
+            if (instanceID != null) {
+                ParametricFunction function = graphPanel.getFunction(instanceID);
+                new ValueTable(function);
             }
         }
     }

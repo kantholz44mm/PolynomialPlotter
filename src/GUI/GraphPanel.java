@@ -16,14 +16,12 @@ import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
-    private final List<ParametricFunction> functions = new ArrayList<>();
+    private final HashMap<UUID, ParametricFunction> functions = new HashMap<>();
     private List<Vector2D> intersections = new ArrayList<>();
     private ParametricExpression parametricExpression = null;
     private Vector2D offset = new Vector2D(0, 0);
@@ -31,9 +29,6 @@ public class GraphPanel extends JPanel {
     private double zoom = 1.0;
     private Vector2D currentGraphPoint = null;
     private final Map<String, Boolean>  options = new HashMap<>();
-    private boolean valueTableIsActive0 = false;
-    private boolean valueTableIsActive1 = false;
-    private boolean valueTableIsActive2 = false;
 
     public GraphPanel() {
         GraphMouseListener graphMouseListener = new GraphMouseListener();
@@ -87,23 +82,6 @@ public class GraphPanel extends JPanel {
             repaint();
         }
     }
-    public  boolean getValueTableIsActive(int index) {
-        return switch (index) {
-            case 0 -> this.valueTableIsActive0;
-            case 1 -> this.valueTableIsActive1;
-            case 2 -> this.valueTableIsActive2;
-            default -> false;
-        };
-    }
-    public void setValueTableIsActiveFalse(int index) {
-        switch (index) {
-            case 0 -> this.valueTableIsActive0 = false;
-            case 1 -> this.valueTableIsActive1 = false;
-            case 2 -> this.valueTableIsActive2 = false;
-            default -> {/* invalid/empty index */}
-        }
-    }
-
 
     private Vector2D findNearestGraphPoint(Vector2D screenPosition) {
         Vector2D worldPosition = toWorldCoordinates(screenPosition);
@@ -114,7 +92,7 @@ public class GraphPanel extends JPanel {
         Vector2D nearestPoint = null;
         double nearestDistance = Double.POSITIVE_INFINITY;
 
-        for (ParametricFunction function : functions) {
+        for (ParametricFunction function : functions.values()) {
             for (double t = lowerScreenBound; t <= upperScreenBound; t += 0.001) {
                 Vector2D point = function.evaluate(t);
                 double distance = point.distance(worldPosition);
@@ -156,21 +134,16 @@ public class GraphPanel extends JPanel {
     // addFunction gets the function as string and its requested color.
     // It returns the index of the listEntry so that the functionControl of the GUI
     // can identify to which function in the functions list it belongs to.
-    public int addFunction(String functionString, Color currentColor) {
+    public UUID addFunction(String functionString, Color currentColor) {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
         PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
         function.calcRootsAndExtremes(minT, maxT, 0.001);
-        functions.add(function);
+        UUID id = UUID.randomUUID();  // generate a random UUID
+        functions.put(id, function);
         calculateIntersections();
         repaint();
-        switch (functions.indexOf(function)) {
-            case 0 -> this.valueTableIsActive0 = true;
-            case 1 -> this.valueTableIsActive1 = true;
-            case 2 -> this.valueTableIsActive2 = true;
-            default -> {/* invalid/empty index */}
-        }
-        return functions.indexOf(function);
+        return id;  // return the UUID of the added function
     }
 
     public void setParametricFunction(ParametricExpression expression) {
@@ -178,42 +151,35 @@ public class GraphPanel extends JPanel {
         repaint();
     }
 
-    public ParametricFunction getFunction(int index) {
-        return functions.get(index);
+    public ParametricFunction getFunction(UUID uuid) {
+        return functions.get(uuid);
     }
 
     public ParametricExpression getParametricExpression() {
         return parametricExpression;
     }
 
-    public void recalculateFunction(String functionString, Color currentColor, int index) {
-
+    public void recalculateFunction(String functionString, Color currentColor, UUID uuid) {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
         PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
-        functions.set(index, function);
+        functions.put(uuid, function);
 
-        if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
+        if (functions.get(uuid) instanceof PolynomialFunction polynomialFunction) {
             polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
         }
         calculateIntersections();
-        switch (functions.indexOf(function)) {
-            case 0 -> this.valueTableIsActive0 = true;
-            case 1 -> this.valueTableIsActive1 = true;
-            case 2 -> this.valueTableIsActive2 = true;
-            default -> {/* invalid/empty index */}
-        }
         repaint();
     }
 
-    public void removeFunction(int index) {
-        functions.remove(index);
+    public void removeFunction(UUID uuid) {
+        functions.remove(uuid);
         calculateIntersections();
         repaint();
     }
 
-    public void deriveFunction(int index) {
-        if (functions.get(index) instanceof PolynomialFunction polynomialFunction) {
+    public void deriveFunction(UUID uuid) {
+        if (functions.get(uuid) instanceof PolynomialFunction polynomialFunction) {
             polynomialFunction.derive();
             calculateIntersections();
             repaint();
@@ -341,7 +307,7 @@ public class GraphPanel extends JPanel {
         double lowerScreenBound = toWorldCoordinates(new Vector2D(0, 0)).x;
         double upperScreenBound = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
 
-        for (ParametricFunction parametricFunction : functions) {
+        for (ParametricFunction parametricFunction : functions.values()) {
             PolynomialFunction polynomialFunction = (PolynomialFunction) parametricFunction;
             drawParametricFunction(g2d, polynomialFunction, lowerScreenBound, upperScreenBound, getWidth(), polynomialFunction.graphColor);
         }
@@ -384,7 +350,7 @@ public class GraphPanel extends JPanel {
         Font font = new Font("Arial", Font.PLAIN, 12);
 
         int index = 0;
-        for (Object function : functions) {
+        for (Object function : functions.values()) {
             if (function instanceof PolynomialFunction polyFunction) {
                 int boxX = 10 + index * (boxWidth + 10);
 
@@ -439,10 +405,9 @@ public class GraphPanel extends JPanel {
         }
         double EPSILON = 1E-8;
 
-        for (int i = 0; i < functions.size(); i++) {
-            ParametricFunction functionOuter = functions.get(i);
-            for (int j = i + 1; j < functions.size(); j++) {
-                ParametricFunction functionInner = functions.get(j);
+        for (ParametricFunction functionOuter : functions.values()) {
+            for (ParametricFunction functionInner : functions.values()) {
+                if (functionInner.equals(functionOuter)) continue;
                 double prevY = functionOuter.evaluate(minT).y - functionInner.evaluate(minT).y;
 
                 for (double x = minT + step; x <= maxT; x += step) {
