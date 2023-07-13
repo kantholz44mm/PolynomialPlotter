@@ -26,7 +26,7 @@ public class ParametricFunctionControl extends JPanel {
         public class HelpActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HelpWindow.getInstance().setVisible(true);
+                new HelpWindow();
             }
         }
 
