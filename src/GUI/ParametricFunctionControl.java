@@ -8,8 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ParametricFunctionControl extends JPanel {
-    GraphPanel graphPanel;
-    ParametricFunctionControlPanel parametricFunctionControlPanel;
+    private GraphPanel graphPanel;
+    private ParametricFunctionControlPanel parametricFunctionControlPanel;
 
     public ParametricFunctionControl(GraphPanel graphPanel) {
 
@@ -46,11 +46,12 @@ public class ParametricFunctionControl extends JPanel {
         public class ValueTableActionListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (parametricFunctionControlPanel.getvalueTableIsActive()){
-                ParametricExpression expression = graphPanel.getParametricExpression();
-                parametricFunctionControlPanel.setgetvalueTableIsActive(false);
-                if (expression != null) {
-                    new ValueTable(expression);
+                if (parametricFunctionControlPanel.valueTableIsActive) {
+                    ParametricExpression expression = graphPanel.getParametricExpression();
+                    parametricFunctionControlPanel.valueTableIsActive = false;
+
+                    if (expression != null) {
+                        new ValueTable(expression);
                     }
                 }
             }
@@ -96,7 +97,6 @@ public class ParametricFunctionControl extends JPanel {
             table.addActionListener(new ValueTableActionListener());
             add(table);
         }
-
     }
 }
 

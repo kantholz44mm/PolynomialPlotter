@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class GraphPanel extends JPanel {
     private final List<ParametricFunction> functions = new ArrayList<>();
-    List<Vector2D> intersections = new ArrayList<>();
+    private List<Vector2D> intersections = new ArrayList<>();
     private ParametricExpression parametricExpression = null;
     private Vector2D offset = new Vector2D(0, 0);
     private Vector2D lastMousePosition = new Vector2D(0, 0);
@@ -84,7 +84,7 @@ public class GraphPanel extends JPanel {
             repaint();
         }
     }
-    public  boolean getValueTableIsActive(int index){
+    public  boolean getValueTableIsActive(int index) {
         return switch (index) {
             case 0 -> this.valueTableIsActive0;
             case 1 -> this.valueTableIsActive1;
@@ -92,13 +92,12 @@ public class GraphPanel extends JPanel {
             default -> false;
         };
     }
-    public void setValueTableIsActiveFalse(int index){
+    public void setValueTableIsActiveFalse(int index) {
         switch (index) {
             case 0 -> this.valueTableIsActive0 = false;
             case 1 -> this.valueTableIsActive1 = false;
             case 2 -> this.valueTableIsActive2 = false;
-            default -> {
-            }
+            default -> {/* invalid/empty index */}
         }
     }
 
@@ -143,8 +142,7 @@ public class GraphPanel extends JPanel {
             case 0 -> this.valueTableIsActive0 = true;
             case 1 -> this.valueTableIsActive1 = true;
             case 2 -> this.valueTableIsActive2 = true;
-            default -> {
-            }
+            default -> {/* invalid/empty index */}
         }
         return functions.indexOf(function);
     }
@@ -153,13 +151,14 @@ public class GraphPanel extends JPanel {
         this.parametricExpression = expression;
         repaint();
     }
+
     public ParametricFunction getFunction(int index) {
         return functions.get(index);
     }
+
     public ParametricExpression getParametricExpression() {
         return parametricExpression;
     }
-
 
     public void recalculateFunction(String functionString, Color currentColor, int index) {
 
@@ -176,8 +175,7 @@ public class GraphPanel extends JPanel {
             case 0 -> this.valueTableIsActive0 = true;
             case 1 -> this.valueTableIsActive1 = true;
             case 2 -> this.valueTableIsActive2 = true;
-            default -> {
-            }
+            default -> {/* invalid/empty index */}
         }
         repaint();
     }

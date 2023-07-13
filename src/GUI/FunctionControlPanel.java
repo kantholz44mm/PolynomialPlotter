@@ -41,7 +41,7 @@ public class FunctionControlPanel extends JPanel {
     private class CalculateActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(instanceID == -1){
+            if(instanceID == -1) {
                 instanceID = graphPanel.addFunction(functionField.getText(), colorPicker.getCurrentColor());
             } else {
                 graphPanel.recalculateFunction(functionField.getText(), colorPicker.getCurrentColor(), instanceID);
@@ -68,14 +68,13 @@ public class FunctionControlPanel extends JPanel {
     private class TableActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(graphPanel.getValueTableIsActive(instanceID)){
+            if(graphPanel.getValueTableIsActive(instanceID)) {
                 graphPanel.setValueTableIsActiveFalse(instanceID);
-            if (instanceID != -1) {
-                ParametricFunction function = graphPanel.getFunction(instanceID);
-                new ValueTable(function);
+                if (instanceID != -1) {
+                    ParametricFunction function = graphPanel.getFunction(instanceID);
+                    new ValueTable(function);
+                }
             }
-            }
-
         }
     }
 
