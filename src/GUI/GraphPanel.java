@@ -29,7 +29,8 @@ public class GraphPanel extends JPanel {
     private Vector2D offset = new Vector2D(0, 0);
     private Vector2D lastMousePosition = new Vector2D(0, 0);
     private double zoom = 1.0;
-    private final Map<String, Boolean> options = new HashMap<>();
+    private Vector2D currentGraphPoint = null;
+    private final Map<String, Boolean>  options = new HashMap<>();
     private boolean valueTableIsActive0 = false;
     private boolean valueTableIsActive1 = false;
     private boolean valueTableIsActive2 = false;
@@ -40,11 +41,12 @@ public class GraphPanel extends JPanel {
         addMouseListener(graphMouseListener);
         addMouseMotionListener(graphMouseListener);
 
-        options.put("Intersections", true);
-        options.put("Information", true);
-        options.put("Grid", true);
-        options.put("Axes", true);
-        options.put("Scales", true);
+        options.put("Draw Intersection Points", true);
+        options.put("Draw Information Windows", true);
+        options.put("Draw Background Grid", true);
+        options.put("Draw x- and y-axis", true);
+        options.put("Draw Scales", true);
+        options.put("Draw Mouse Intersection Point", true);
 
         createOptionsButton();
     }
@@ -81,6 +83,7 @@ public class GraphPanel extends JPanel {
         @Override
         public void mouseMoved(MouseEvent e) {
             lastMousePosition = new Vector2D(e.getX(), e.getY());
+            currentGraphPoint = findNearestGraphPoint(lastMousePosition);
             repaint();
         }
     }
@@ -102,6 +105,29 @@ public class GraphPanel extends JPanel {
         }
     }
 
+
+    private Vector2D findNearestGraphPoint(Vector2D screenPosition) {
+        Vector2D worldPosition = toWorldCoordinates(screenPosition);
+        double lowerScreenBound = toWorldCoordinates(new Vector2D(0, 0)).x;
+        double upperScreenBound = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
+
+        final double MAX_DISTANCE = 1.0; // adjust mouse to graph distance
+        Vector2D nearestPoint = null;
+        double nearestDistance = Double.POSITIVE_INFINITY;
+
+        for (ParametricFunction function : functions) {
+            for (double t = lowerScreenBound; t <= upperScreenBound; t += 0.001) {
+                Vector2D point = function.evaluate(t);
+                double distance = point.distance(worldPosition);
+                if (distance < nearestDistance && distance <= MAX_DISTANCE) {
+                    nearestDistance = distance;
+                    nearestPoint = point;
+                }
+            }
+        }
+
+        return nearestPoint;
+    }
 
     private void createOptionsButton() {
         setLayout(new BorderLayout());
@@ -242,12 +268,13 @@ public class GraphPanel extends JPanel {
         double step = calculateGridStep();
         Vector2D zero = toScreenCoordinates(new Vector2D(0, 0));
 
-        if (options.get("Axes")) drawAxes(g2d, width, height, zero);
-        if (options.get("Grid")) drawGrid(g2d, step);
+        if(options.get("Draw x- and y-axis"))drawAxes(g2d, width, height, zero);
+        if(options.get("Draw Background Grid"))drawGrid(g2d, step);
         drawFunctions(g2d);
-        if (options.get("Scales")) drawLabelsAndScales(g2d, width, height, step);
-        if (options.get("Information")) drawInformationWindows(g2d);
-        if (options.get("Intersections")) drawIntersections(g2d);
+        if(options.get("Draw Scales")) drawLabelsAndScales(g2d, width, height, step);
+        if(options.get("Draw Information Windows")) drawInformationWindows(g2d);
+        if(options.get("Draw Intersection Points")) drawIntersections(g2d);
+        if(options.get("Draw Mouse Intersection Point")) drawMouseIntersectionPoint(g2d);
     }
 
     private double getScale() {
@@ -398,19 +425,7 @@ public class GraphPanel extends JPanel {
             Vector2D screenPoint = toScreenCoordinates(intersection);
             g2d.fillOval((int) screenPoint.x - 6, (int) screenPoint.y - 6, 12, 12);
             if (screenPoint.distance(lastMousePosition) < 5) {
-
-                String intersectionPoint = String.format("(%.2f, %.2f)", intersection.x, intersection.y);
-                int x = (int) screenPoint.x + 5;
-                int y = (int) screenPoint.y - 5;
-
-                int textWidth = metrics.stringWidth(intersectionPoint);
-                int textHeight = metrics.getHeight();
-
-                g2d.setColor(new Color(0, 0, 0, 128));
-                g2d.fillRect(x - 2, y - textHeight, textWidth + 4, textHeight + 2);
-
-                g2d.setColor(Color.YELLOW);
-                g2d.drawString(intersectionPoint, x, y);
+                drawPoint(g2d, intersection, screenPoint, metrics);
             }
         }
     }
@@ -447,6 +462,35 @@ public class GraphPanel extends JPanel {
                 }
             }
         }
+    }
+
+    private void drawMouseIntersectionPoint(Graphics2D g2d){
+        if (currentGraphPoint != null) {
+            Font font = new Font("Arial", Font.BOLD, 14);
+            g2d.setFont(font);
+            FontMetrics metrics = g2d.getFontMetrics(font);
+
+            Vector2D screenPoint = toScreenCoordinates(currentGraphPoint);
+            g2d.setColor(Color.RED);
+            g2d.fillOval((int)screenPoint.x - 5, (int)screenPoint.y - 5, 10, 10);
+
+            drawPoint(g2d, currentGraphPoint, screenPoint, metrics);
+        }
+    }
+
+    private void drawPoint(Graphics2D g2d, Vector2D point, Vector2D screenPoint, FontMetrics metrics){
+        String graphPoint = String.format("(%.2f, %.2f)", point.x, point.y);
+        int x = (int) screenPoint.x + 5;
+        int y = (int) screenPoint.y - 5;
+
+        int textWidth = metrics.stringWidth(graphPoint);
+        int textHeight = metrics.getHeight();
+
+        g2d.setColor(new Color(0, 0, 0, 128));
+        g2d.fillRect(x - 2, y - textHeight, textWidth + 4, textHeight + 2);
+
+        g2d.setColor(Color.YELLOW);
+        g2d.drawString(graphPoint, x, y);
     }
 
     private Vector2D toScreenCoordinates(Vector2D position) {
