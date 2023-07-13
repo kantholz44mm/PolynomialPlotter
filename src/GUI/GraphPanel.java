@@ -31,9 +31,6 @@ public class GraphPanel extends JPanel {
     private double zoom = 1.0;
     private Vector2D currentGraphPoint = null;
     private final Map<String, Boolean>  options = new HashMap<>();
-    private boolean valueTableIsActive0 = false;
-    private boolean valueTableIsActive1 = false;
-    private boolean valueTableIsActive2 = false;
 
     public GraphPanel() {
         GraphMouseListener graphMouseListener = new GraphMouseListener();
@@ -87,23 +84,6 @@ public class GraphPanel extends JPanel {
             repaint();
         }
     }
-    public  boolean getValueTableIsActive(int index) {
-        return switch (index) {
-            case 0 -> this.valueTableIsActive0;
-            case 1 -> this.valueTableIsActive1;
-            case 2 -> this.valueTableIsActive2;
-            default -> false;
-        };
-    }
-    public void setValueTableIsActiveFalse(int index) {
-        switch (index) {
-            case 0 -> this.valueTableIsActive0 = false;
-            case 1 -> this.valueTableIsActive1 = false;
-            case 2 -> this.valueTableIsActive2 = false;
-            default -> {/* invalid/empty index */}
-        }
-    }
-
 
     private Vector2D findNearestGraphPoint(Vector2D screenPosition) {
         Vector2D worldPosition = toWorldCoordinates(screenPosition);
@@ -164,12 +144,6 @@ public class GraphPanel extends JPanel {
         functions.add(function);
         calculateIntersections();
         repaint();
-        switch (functions.indexOf(function)) {
-            case 0 -> this.valueTableIsActive0 = true;
-            case 1 -> this.valueTableIsActive1 = true;
-            case 2 -> this.valueTableIsActive2 = true;
-            default -> {/* invalid/empty index */}
-        }
         return functions.indexOf(function);
     }
 
@@ -197,12 +171,6 @@ public class GraphPanel extends JPanel {
             polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
         }
         calculateIntersections();
-        switch (functions.indexOf(function)) {
-            case 0 -> this.valueTableIsActive0 = true;
-            case 1 -> this.valueTableIsActive1 = true;
-            case 2 -> this.valueTableIsActive2 = true;
-            default -> {/* invalid/empty index */}
-        }
         repaint();
     }
 

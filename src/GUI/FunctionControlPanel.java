@@ -68,12 +68,9 @@ public class FunctionControlPanel extends JPanel {
     private class TableActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(graphPanel.getValueTableIsActive(instanceID)) {
-                graphPanel.setValueTableIsActiveFalse(instanceID);
-                if (instanceID != -1) {
-                    ParametricFunction function = graphPanel.getFunction(instanceID);
-                    new ValueTable(function);
-                }
+            if (instanceID != -1) {
+                ParametricFunction function = graphPanel.getFunction(instanceID);
+                new ValueTable(function);
             }
         }
     }

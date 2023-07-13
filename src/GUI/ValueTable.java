@@ -7,6 +7,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 public class ValueTable extends JDialog {
     private ParametricFunction parametricFunction = null;
@@ -90,6 +92,18 @@ public class ValueTable extends JDialog {
         calculationParameters.add(calculateButton);
         calculationParameters.setPreferredSize(new Dimension(500,100));
         calculateButton.addActionListener(new ValueTable.CalculateActionListener());
+
+        this.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                // Do nothing
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                dispose();
+            }
+        });
 
         this.add(calculationParameters);
         this.setSize(500, 600);
