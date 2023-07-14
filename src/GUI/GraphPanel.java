@@ -137,13 +137,18 @@ public class GraphPanel extends JPanel {
     public UUID addFunction(String functionString, Color currentColor) {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
-        PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
-        function.calcRootsAndExtremes(minT, maxT, 0.001);
-        UUID id = UUID.randomUUID();  // generate a random UUID
-        functions.put(id, function);
-        calculateIntersections();
-        repaint();
-        return id;  // return the UUID of the added function
+        try {
+            PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
+            function.calcRootsAndExtremes(minT, maxT, 0.001);
+            UUID id = UUID.randomUUID();  // generate a random UUID
+            functions.put(id, function);
+            calculateIntersections();
+            repaint();
+            return id;
+        } catch (IllegalArgumentException e) {
+            showErrorDialog(e.getMessage());
+            return null;
+        }
     }
 
     public void setParametricFunction(ParametricExpression expression) {
@@ -162,14 +167,18 @@ public class GraphPanel extends JPanel {
     public void recalculateFunction(String functionString, Color currentColor, UUID uuid) {
         double minT = toWorldCoordinates(new Vector2D(0, 0)).x;
         double maxT = toWorldCoordinates(new Vector2D(getWidth(), 0)).x;
-        PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
-        functions.put(uuid, function);
+        try {
+            PolynomialFunction function = new PolynomialFunction(functionString, currentColor);
+            functions.put(uuid, function);
 
-        if (functions.get(uuid) instanceof PolynomialFunction polynomialFunction) {
-            polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
+            if (functions.get(uuid) instanceof PolynomialFunction polynomialFunction) {
+                polynomialFunction.calcRootsAndExtremes(minT, maxT, 0.001);
+            }
+            calculateIntersections();
+            repaint();
+        } catch (IllegalArgumentException e) {
+            showErrorDialog(e.getMessage());
         }
-        calculateIntersections();
-        repaint();
     }
 
     public void removeFunction(UUID uuid) {
@@ -474,6 +483,10 @@ public class GraphPanel extends JPanel {
         double y = (zeroY - position.y) / getScale();
 
         return new Vector2D(x, y);
+    }
+
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
 
